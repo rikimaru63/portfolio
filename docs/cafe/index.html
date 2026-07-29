@@ -3,8 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KOMOREBI COFFEE | 世田谷の隠れ家カフェ</title>
-  <meta name="description" content="木漏れ日のように穏やかなひとときを。世田谷・経堂の隠れ家カフェ KOMOREBI COFFEE。自家焙煎コーヒーとハンドメイドスイーツをお届けします。">
+  <title>架空デモ | KOMOREBI COFFEE | カフェサイト作例</title>
+  <meta name="description" content="ポートフォリオ用に制作した、実在しないカフェの架空デモサイトです。">
+  <meta name="robots" content="noindex,nofollow">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -60,6 +62,7 @@
     /* Base */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html { scroll-behavior: smooth; }
+    [id] { scroll-margin-top: 7rem; }
     body {
       font-family: 'Noto Sans JP', sans-serif;
       color: #2C1810;
@@ -67,6 +70,71 @@
       overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
+    }
+
+    a:focus-visible,
+    button:focus-visible {
+      outline: 3px solid #C17F59;
+      outline-offset: 4px;
+    }
+
+    .demo-skip-link {
+      position: fixed;
+      z-index: 1000;
+      top: 0.5rem;
+      left: 0.5rem;
+      padding: 0.65rem 0.9rem;
+      border-radius: 0.5rem;
+      background: #FAF8F5;
+      color: #102722;
+      font-size: 0.75rem;
+      font-weight: 700;
+      transform: translateY(-180%);
+      transition: transform 160ms ease;
+    }
+    .demo-skip-link:focus-visible { transform: translateY(0); }
+
+    .demo-site-notice {
+      position: relative;
+      z-index: 100;
+      background: #102722;
+      color: #FBFAF6;
+    }
+    .demo-site-notice__inner {
+      width: min(1180px, calc(100% - 2rem));
+      min-height: 4.5rem;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+      padding: 0.8rem 0;
+    }
+    .demo-site-notice__copy {
+      min-width: 0;
+      font-size: 0.78rem;
+      line-height: 1.6;
+    }
+    .demo-site-notice__copy strong {
+      display: block;
+      color: #F4D35E;
+      font-size: 0.9rem;
+    }
+    .demo-site-notice__back {
+      flex: 0 0 auto;
+      padding: 0.65rem 0.9rem;
+      border: 1px solid rgba(251, 250, 246, 0.5);
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition:
+        background-color 180ms ease,
+        color 180ms ease;
+    }
+    .demo-site-notice__back:hover {
+      background: #FBFAF6;
+      color: #102722;
     }
 
     /* Typography */
@@ -219,7 +287,10 @@
       width: 24px;
       height: 1.5px;
       background: #2C1810;
-      transition: all 0.3s ease;
+      transition:
+        background-color 0.3s ease,
+        opacity 0.3s ease,
+        transform 0.3s ease;
       margin: 6px 0;
     }
     .hamburger.active span:nth-child(1) {
@@ -315,10 +386,52 @@
       background: #C17F59;
       transform: translateY(-50%);
     }
+
+    @media (max-width: 640px) {
+      .demo-site-notice__inner {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 0.6rem;
+        padding: 0.8rem 0;
+      }
+      .demo-site-notice__back {
+        width: 100%;
+        text-align: center;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      .reveal,
+      .reveal-left,
+      .reveal-right,
+      .reveal-scale,
+      .stagger-children > * {
+        opacity: 1 !important;
+        transform: none !important;
+      }
+    }
   </style>
 </head>
 
 <body class="bg-cream-light font-body">
+  <a class="demo-skip-link" href="#main-content">デモ本文へ移動</a>
+  <aside id="demo-notice" class="demo-site-notice" aria-label="デモサイトの案内">
+    <div class="demo-site-notice__inner">
+      <p class="demo-site-notice__copy">
+        <strong>架空のデモサイト</strong>
+        この店舗・人物・住所・電話番号・予約・SNSはすべて作例用です。実在する顧客とは関係なく、外部への発信や送信も行いません。
+      </p>
+      <a class="demo-site-notice__back" data-demo-return href="../#demos">ポートフォリオのWeb作例一覧へ戻る</a>
+    </div>
+  </aside>
 
   <!-- ============================================ -->
   <!-- HEADER -->
@@ -327,7 +440,7 @@
     <div class="max-w-7xl mx-auto px-6 lg:px-8">
       <div class="flex items-center justify-between h-20 lg:h-24">
         <!-- Logo -->
-        <a href="#" class="flex items-center gap-3">
+        <a href="#hero" class="flex items-center gap-3">
           <div class="flex flex-col">
             <span class="logo-text font-display text-xl lg:text-2xl font-semibold tracking-wide text-brown-900 transition-colors duration-400">KOMOREBI</span>
             <span class="logo-text font-display text-[0.6rem] lg:text-[0.7rem] tracking-[0.35em] text-brown-600 transition-colors duration-400 -mt-1">COFFEE ROASTERS</span>
@@ -359,11 +472,12 @@
       <a href="#gallery" class="mobile-nav-link text-cream text-lg tracking-[0.3em] font-light hover:text-terracotta transition-colors">GALLERY</a>
       <a href="#access" class="mobile-nav-link text-cream text-lg tracking-[0.3em] font-light hover:text-terracotta transition-colors">ACCESS</a>
       <div class="divider-line mt-4 mb-4"></div>
-      <a href="tel:03-1234-5678" class="text-brown-300 text-sm tracking-wider">03-1234-5678</a>
+      <a href="#demo-notice" data-demo-safe-link class="mobile-nav-link text-brown-300 text-sm tracking-wider" aria-label="架空の電話番号。デモサイトの案内へ戻る">03-1234-5678（架空）</a>
       <p class="text-brown-400 text-xs tracking-wider">OPEN 9:00 - 19:00</p>
     </div>
   </header>
 
+  <main id="main-content">
 
   <!-- ============================================ -->
   <!-- HERO -->
@@ -958,7 +1072,7 @@
             </div>
             <div class="flex border-b border-brown-200 pb-4">
               <span class="text-brown-500 text-sm w-28 flex-shrink-0 tracking-wider">電話</span>
-              <a href="tel:03-1234-5678" class="text-brown-900 text-sm hover:text-terracotta transition-colors">03-1234-5678</a>
+              <a href="#demo-notice" data-demo-safe-link class="text-brown-900 text-sm hover:text-terracotta transition-colors" aria-label="架空の電話番号。デモサイトの案内へ戻る">03-1234-5678（架空）</a>
             </div>
             <div class="flex border-b border-brown-200 pb-4">
               <span class="text-brown-500 text-sm w-28 flex-shrink-0 tracking-wider">営業時間</span>
@@ -989,10 +1103,13 @@
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3242.0!2d139.6337!3d35.6480!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6018f2c0a0000001%3A0x0!2z57WM5aCC6aeF!5e0!3m2!1sja!2sjp!4v1700000000000!5m2!1sja!2sjp"
               width="100%"
               height="100%"
-              style="border:0;"
+              style="border:0; pointer-events:none;"
               allowfullscreen=""
               loading="lazy"
-              referrerpolicy="no-referrer-when-downgrade">
+              referrerpolicy="no-referrer-when-downgrade"
+              tabindex="-1"
+              data-demo-inert
+              title="架空の所在地を示す操作できない地図イメージ">
             </iframe>
           </div>
 
@@ -1083,14 +1200,15 @@
 
       <!-- Follow Button -->
       <div class="text-center mt-10 reveal">
-        <a href="#" class="inline-flex items-center gap-3 border border-cream-light/30 text-cream-light px-8 py-3 text-xs tracking-[0.2em] hover:bg-cream-light/10 transition-all duration-300 rounded-full">
+        <a href="#demo-notice" data-demo-safe-link class="inline-flex items-center gap-3 border border-cream-light/30 text-cream-light px-8 py-3 text-xs tracking-[0.2em] hover:bg-cream-light/10 transition-colors duration-300 rounded-full">
           <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
-          FOLLOW US
+          SNS表示サンプル（外部リンクなし）
         </a>
       </div>
     </div>
   </section>
 
+  </main>
 
   <!-- ============================================ -->
   <!-- FOOTER -->
@@ -1128,20 +1246,20 @@
           <h4 class="text-cream-dark text-xs tracking-[0.3em] mb-6 font-medium">CONTACT</h4>
           <div class="space-y-3 mb-8">
             <p class="text-brown-400 text-sm font-light">
-              <a href="tel:03-1234-5678" class="hover:text-terracotta transition-colors">03-1234-5678</a>
+              <a href="#demo-notice" data-demo-safe-link class="hover:text-terracotta transition-colors" aria-label="架空の電話番号。デモサイトの案内へ戻る">03-1234-5678（架空）</a>
             </p>
-            <p class="text-brown-400 text-sm font-light">info@komorebi-coffee.jp</p>
+            <p class="text-brown-400 text-sm font-light">info@komorebi-coffee.jp（架空）</p>
           </div>
 
           <!-- SNS Icons -->
           <div class="flex gap-4">
-            <a href="#" class="text-brown-400 hover:text-terracotta transition-colors" aria-label="Instagram">
+            <a href="#demo-notice" data-demo-safe-link class="text-brown-400 hover:text-terracotta transition-colors" aria-label="Instagram表示サンプル。外部へ移動しません">
               <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
             </a>
-            <a href="#" class="text-brown-400 hover:text-terracotta transition-colors" aria-label="X (Twitter)">
+            <a href="#demo-notice" data-demo-safe-link class="text-brown-400 hover:text-terracotta transition-colors" aria-label="X表示サンプル。外部へ移動しません">
               <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
             </a>
-            <a href="#" class="text-brown-400 hover:text-terracotta transition-colors" aria-label="LINE">
+            <a href="#demo-notice" data-demo-safe-link class="text-brown-400 hover:text-terracotta transition-colors" aria-label="LINE表示サンプル。外部へ移動しません">
               <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>
             </a>
           </div>
@@ -1152,6 +1270,9 @@
       <div class="border-t border-brown-800/50 mt-12 pt-8">
         <p class="text-brown-500 text-xs text-center tracking-wider font-light">
           &copy; 2024 KOMOREBI COFFEE. All rights reserved.
+        </p>
+        <p class="text-brown-500 text-xs text-center tracking-wider font-light mt-2">
+          架空のデモサイトです。実在する店舗・顧客とは関係ありません。
         </p>
       </div>
     </div>
@@ -1168,6 +1289,7 @@
     const header = document.getElementById('header');
     const menuBtn = document.getElementById('menuBtn');
     const mobileMenu = document.getElementById('mobileMenu');
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     let lastScroll = 0;
 
     window.addEventListener('scroll', () => {
@@ -1230,7 +1352,7 @@
     const heroParallax = heroSection.querySelector('.hero-parallax');
 
     // Only enable on desktop (no mobile performance issues)
-    if (window.innerWidth > 768) {
+    if (!prefersReducedMotion && window.innerWidth > 768) {
       window.addEventListener('scroll', () => {
         const scrollY = window.pageYOffset;
         const heroHeight = heroSection.offsetHeight;
@@ -1255,7 +1377,7 @@
           const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - headerHeight;
           window.scrollTo({
             top: targetPosition,
-            behavior: 'smooth'
+            behavior: prefersReducedMotion ? 'auto' : 'smooth'
           });
         }
       });
