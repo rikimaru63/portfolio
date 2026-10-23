@@ -32,12 +32,12 @@ const since = repos.map((r) => r.y).sort()[0];
   <section class="hero" id="top">
     <div class="hero-in wrap">
       <h1 class="display" data-lines>Ando</h1>
-      <p class="hero-what" data-reveal>LINE の自動応対、ネットショップ、入金や進捗の管理画面、調査の自動化。動く形で作って、本番に置いて、引き継げる状態で渡すフリーランスの開発者です。</p>
-      <p class="lead" data-reveal style="--d:1">後ろに並んでいるのは、実際に動いている物の画面です。スクロールすると一つずつ近づきます。</p>
+      <p class="hero-what" data-reveal>LINE の返信、入金の確認、ネットショップの更新。毎日だれかが手でやっている仕事を、止まらない仕組みに置き換えています。</p>
+      <p class="lead" data-reveal style="--d:1">たとえば後ろに見えているトレーディングカードの店は、商品 9,641 点を売ったまま 11 か月改修を続けています。スクロールすると、動いている物を順に見られます。</p>
       <p class="stats-line mono small muted" data-reveal style="--d:2">本番で動く物 15 · 自動テスト 4,993 件 · GitHub {repos.length} リポジトリ {totalCommits.toLocaleString()} コミット</p>
       <p class="cta" data-reveal style="--d:3">
         <a class="button" href="#work">作った物を見る</a>
-        <a class="button ghost" href="#services">料金を見る</a>
+        <a class="button ghost" href="#services">こんな時に呼んでください</a>
       </p>
     </div>
     <p class="hint small mono muted" aria-hidden="true">スクロールで進む</p>
@@ -70,14 +70,14 @@ const since = repos.map((r) => r.y).sort()[0];
   <!-- 依頼できることと料金 -->
   <section class="services" id="services" aria-labelledby="services-h">
     <div class="wrap">
-      <h2 id="services-h" class="head" data-lines>依頼できることと料金の目安</h2>
-      <p class="lead" data-reveal>「相談ください」だけでは予算が組めないと思うので、よく頼まれる物に目安を付けておきます。実際の金額は、今の仕組みを見てから出します。</p>
+      <h2 id="services-h" class="head" data-lines>こんな時に呼んでください</h2>
+      <p class="lead" data-reveal>まず 60 分、無料で話します。作るべきか、直すべきか、買った方が早いかを、その場で答えます。その先の目安を書いておきます。実際の金額は今の仕組みを見てから出します。</p>
       <ul class="svc">
         {services.map((sv, i) => (
           <li class="svc-row" data-reveal style={`--d:${i % 3}`}>
             <div class="svc-main">
-              <h3>{sv.item}</h3>
-              <p>{sv.note}</p>
+              <h3>「{sv.pain}」</h3>
+              <p>{sv.what}</p>
             </div>
             <div class="svc-side">
               <p class="svc-price">{sv.price}</p>
@@ -145,7 +145,7 @@ const since = repos.map((r) => r.y).sort()[0];
     <div class="wrap demo-grid">
       <div>
         <h2 id="demo-h" class="head" data-lines>触ってみてください</h2>
-        <p class="lead" data-reveal>私が作る LINE の自動応対では、AI に返信の文章を書かせていません。AI がするのは問い合わせの種類を判定して、承認済みの定型文を選ぶところまでで、選べない時は何も返さずに人へ回します。返信の事故は一度で信用を失うので、自動化の範囲が狭くなっても事故がない方が得だと考えています。</p>
+        <p class="lead" data-reveal>一番心配されるのは、AI が勝手に変なことを返さないか、だと思います。だから私が作る LINE の自動応対では、AI に文章を書かせていません。問い合わせの種類を判定して承認済みの定型文を選ぶところまでで、選べない時は何も返さずに人へ回します。返信の事故は一度で信用を失うので、自動化の範囲が狭くなっても事故がない方が得だと考えています。下で実際に打ってみてください。</p>
       </div>
       <div data-reveal style="--d:1"><LineDemo /></div>
     </div>
@@ -154,11 +154,12 @@ const since = repos.map((r) => r.y).sort()[0];
   <!-- 進め方と使う物 -->
   <section class="stack" id="stack" aria-labelledby="stack-h">
     <div class="wrap">
-      <h2 id="stack-h" class="head" data-lines>進め方と使う物</h2>
+      <h2 id="stack-h" class="head" data-lines>頼んだ後に何が起きるか</h2>
       <div class="stack-text">
-        <p data-reveal>進め方は単純です。チャットで困っていること、今のやり方、いつまでに、の 3 行をもらえれば動けます。要望を「何ができれば完成か」という 1 枚に書き直して返し、確認は 1 往復で済ませます。本番に出す前に試験と影運用で確かめ、戻せる手順を先に用意します。終わったら変更の履歴と引き継ぎ資料を渡すので、私がいなくなっても困りません。AI には下書きと試験と調査をやらせていますが、判断と確認は私がします。</p>
-        <p data-reveal style="--d:1">使っている物は TypeScript と Python が中心で、Next.js、Astro、Prisma、PostgreSQL、Redis、Docker を日常的に使います。LINE Messaging API、Threads API、OpenAI と Claude の API、Three.js と GSAP（このサイトもそうです）、Godot、Raspberry Pi と ESP32 も扱います。</p>
-        <p data-reveal style="--d:2">動かす場所は自社 VPS の Coolify で、15 プロジェクト、約 25 のアプリと 5 つの PostgreSQL を運用しています。GitHub の Deploy Key と App で自動配置するので、依頼主のサーバーに置く案件も同じ手順でできます。</p>
+        <p data-reveal>最初はチャットで 3 行です。困っていること、今のやり方、いつまでに。仕様書はいりません。私が要望を「何ができれば完成か」という 1 枚に書き直して返すので、それに丸を付けてもらえば作り始めます。確認はその 1 往復で済ませます。</p>
+        <p data-reveal style="--d:1">作っている間は、動いている物を止めません。本番と分けた複製で作り、試験を通し、戻せる手順を先に用意してから出します。LINE のような相手のいる物は、判定だけして送らない期間を置いて、人の判断と突き合わせてから切り替えます。</p>
+        <p data-reveal style="--d:2">終わったら、変更の履歴と引き継ぎ資料を渡します。社内の担当者や別の会社に渡しても読める形にするので、私に縛られることはありません。AI には下書きと試験と調査をやらせていますが、判断と確認は私がします。</p>
+        <p class="small muted" data-reveal style="--d:3">道具は TypeScript と Python が中心で、Next.js、Astro、Prisma、PostgreSQL、Redis、Docker を日常的に使います。LINE Messaging API、Threads API、OpenAI と Claude の API、Three.js と GSAP（このサイトもそうです）、Godot、Raspberry Pi と ESP32 も扱います。動かす場所は自社 VPS の Coolify で、15 プロジェクト、約 25 のアプリと 5 つの PostgreSQL を運用しています。</p>
       </div>
     </div>
   </section>
@@ -166,10 +167,10 @@ const since = repos.map((r) => r.y).sort()[0];
   <!-- 連絡 -->
   <section class="contact" id="contact" aria-labelledby="contact-h">
     <div class="wrap">
-      <h2 id="contact-h" class="head" data-lines>相談はメールで</h2>
-      <p class="lead" data-reveal>困っていること、今のやり方、希望の時期の 3 つを書いて送ってもらえれば、次に確かめることを整理して返します。初回の 60 分は無料で、構築は 30 万円から、保守は月 3 万円からです。</p>
+      <h2 id="contact-h" class="head" data-lines>手でやっている仕事は、人が辞めた日に止まります</h2>
+      <p class="lead" data-reveal>そうなる前に、60 分だけ話しませんか。無料です。メールに、困っていること、今のやり方、いつまでに、の 3 行を書いて送ってください。翌営業日までに、作るか直すか買うかの判断と、だいたいの金額を返します。合わなければそれで終わりで構いません。</p>
       <p class="cta" data-reveal style="--d:1">
-        <a class="button" href={mail}>メールで相談する</a>
+        <a class="button" href={mail}>60 分の相談を申し込む（無料）</a>
         <a class="button ghost" href="https://github.com/rikimaru63/portfolio" rel="noopener">このサイトのコードを見る</a>
       </p>
       <p class="mono small muted">{site.email}</p>
@@ -236,7 +237,7 @@ const since = repos.map((r) => r.y).sort()[0];
   .svc { margin-top: 3rem; }
   .svc-row { display: grid; gap: 0.8rem; padding: 1.6rem 0; border-top: 1px solid var(--line); }
   @media (min-width: 48em) { .svc-row { grid-template-columns: 1fr 14rem; gap: 3rem; } }
-  .svc-row h3 { font-size: clamp(1.15rem, 1.6vw, 1.4rem); margin-bottom: 0.4rem; }
+  .svc-row h3 { font-size: clamp(1.1rem, 1.5vw, 1.35rem); margin-bottom: 0.5rem; font-weight: 600; }
   .svc-main p { color: var(--fg-2); }
   .svc-price { font-family: var(--font-display); font-weight: 700; font-size: 1.4rem; color: var(--accent); }
   .svc-note { margin-top: 2rem; }
