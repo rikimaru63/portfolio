@@ -74,7 +74,7 @@ async function world() {
   if (!gl) { document.documentElement.classList.add("no-webgl"); return; }
   const cards = [...gallery.querySelectorAll<HTMLElement>("[data-work-card]")];
   const count = gallery.querySelector<HTMLElement>("[data-work-count]");
-  const works = cards.map((c) => ({ id: c.dataset.id || "", img: c.dataset.img || "" }));
+  const works = cards.map((c) => ({ id: c.dataset.id || "", img: c.dataset.img || "", title: c.querySelector("h3")?.textContent?.trim() || "" }));
   const base = (document.body.dataset.base || "/") as string;
   try {
     const { startWorld } = await import("./world");

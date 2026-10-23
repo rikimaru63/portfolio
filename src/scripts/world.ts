@@ -27,7 +27,7 @@ const hueOf = (l: string) => LANG_HUE[l] ?? LANG_HUE["-"];
 export type WorldOptions = {
   canvas: HTMLCanvasElement;
   repos: Repo[];
-  works: { id: string; img: string }[];
+  works: { id: string; img: string; title: string }[];
   base: string;
   tip: HTMLElement;
   gallery: HTMLElement;
@@ -48,7 +48,7 @@ export function startWorld(o: WorldOptions) {
 
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0x0b0f1a);
-  scene.fog = new THREE.FogExp2(0x0b0f1a, 0.012);
+  scene.fog = new THREE.FogExp2(0x0b0f1a, 0.009);
 
   const camera = new THREE.PerspectiveCamera(42, innerWidth / innerHeight, 0.1, 400);
 
@@ -132,7 +132,7 @@ export function startWorld(o: WorldOptions) {
   if (city.instanceColor) city.instanceColor.needsUpdate = true;
   if (roofs.instanceColor) roofs.instanceColor.needsUpdate = true;
   cityGroup.add(city, roofs);
-  scene.add(cityGroup);
+  cityGroup.visible = false; // 街はやめた。依頼主が知りたいのは作った物なので、最初から画面を見せる
   void cols;
 
   // ---------- screens: the real screenshots ----------
@@ -146,7 +146,7 @@ export function startWorld(o: WorldOptions) {
   o.works.forEach((w, i) => {
     const mat = new THREE.MeshBasicMaterial({ color: 0x1a2236 });
     const m = new THREE.Mesh(screenGeo, mat);
-    const side = i % 2 === 0 ? -1 : 1;
+    const side = i % 2 === 0 ? 1 : -1;
     const z = -40 - i * 30;
     const x = side * 11;
     const y = 7 + Math.sin(i * 0.9) * 1.5;
@@ -156,7 +156,6 @@ export function startWorld(o: WorldOptions) {
     f.position.copy(m.position);
     f.rotation.copy(m.rotation);
     f.position.add(new THREE.Vector3(Math.sin(-m.rotation.y) * 0.08, 0, -Math.cos(m.rotation.y) * 0.08));
-    f.visible = false; m.visible = false;
     scene.add(f, m);
     screens.push(m);
     frames.push(f);
@@ -183,8 +182,8 @@ export function startWorld(o: WorldOptions) {
   }
 
   // ---------- camera: hero orbit → gallery path ----------
-  const heroPos = new THREE.Vector3(26, 16, 30);
-  const heroLook = new THREE.Vector3(0, 3, 0);
+  const heroPos = new THREE.Vector3(-7, 9, 0);
+  const heroLook = new THREE.Vector3(7, 6.5, -70);
   const camPos = heroPos.clone();
   const camLook = heroLook.clone();
   const targetPos = heroPos.clone();
@@ -194,14 +193,12 @@ export function startWorld(o: WorldOptions) {
   const mouse = new THREE.Vector2(0, 0);
   let currentWork = -1;
 
-  const curve = new THREE.CatmullRomCurve3([heroPos.clone().add(new THREE.Vector3(0, 6, 0)), new THREE.Vector3(0, 14, 2), new THREE.Vector3(0, 10, -22), ...path.map((p) => p.pos)], false, "centripetal", 0.6);
-  const lookCurve = new THREE.CatmullRomCurve3([heroLook.clone(), new THREE.Vector3(0, 4, -20), new THREE.Vector3(0, 7, -40), ...path.map((p) => p.look)], false, "centripetal", 0.6);
+  const curve = new THREE.CatmullRomCurve3([heroPos.clone(), ...path.map((p) => p.pos)], false, "centripetal", 0.6);
+  const lookCurve = new THREE.CatmullRomCurve3([heroLook.clone(), ...path.map((p) => p.look)], false, "centripetal", 0.6);
 
   const setProgress = (p: number) => {
     progress = p;
     const u = Math.min(1, Math.max(0, p));
-    const show = u > 0;
-    screens.forEach((m, i) => { m.visible = show; frames[i].visible = show; });
     if (u <= 0) { heroT = 1; targetPos.copy(heroPos); targetLook.copy(heroLook); }
     else {
       heroT = 0;
@@ -210,7 +207,7 @@ export function startWorld(o: WorldOptions) {
     }
     // 今どの画面の前にいるか: カメラの目標位置に最も近い停止点
     let i = -1;
-    if (u > 0 && targetPos.z < path[0].pos.z + 12) {
+    if (u > 0.02) {
       let best = Infinity;
       path.forEach((p, k) => { const d = Math.abs(p.pos.z - targetPos.z); if (d < best) { best = d; i = k; } });
     }
@@ -242,13 +239,12 @@ export function startWorld(o: WorldOptions) {
     if (heroT < 1 || coarse || scrollY > innerHeight * 0.4) { if (hovered >= 0 || !o.tip.hidden) { hovered = -1; o.tip.hidden = true; } return; }
     if (Math.abs(pointer.x) > 1 || Math.abs(pointer.y) > 1) { if (hovered >= 0 || !o.tip.hidden) { hovered = -1; o.tip.hidden = true; } return; }
     ray.setFromCamera(pointer, camera);
-    const hit = ray.intersectObject(city, false)[0];
-    const id = hit?.instanceId ?? -1;
+    const hit = ray.intersectObjects(screens, false)[0];
+    const id = hit ? screens.indexOf(hit.object as THREE.Mesh) : -1;
     if (id === hovered) return;
     hovered = id;
     if (id < 0) { o.tip.hidden = true; return; }
-    const r = repos[id];
-    o.tip.innerHTML = `<b>${r.p ? r.n : "非公開のリポジトリ"}</b><span>${r.l === "-" ? "文書" : r.l} · コミット ${r.c.toLocaleString()} · ${r.y}</span>`;
+    o.tip.innerHTML = `<b>${o.works[id].title}</b><span>スクロールで近づく</span>`;
     o.tip.hidden = false;
   };
 
@@ -268,9 +264,8 @@ export function startWorld(o: WorldOptions) {
     if (scrollY < 2 && heroT < 1) setProgress(0); // 先頭へ戻ったのに視点が残る事故を防ぐ
     // hero: slow orbit + mouse parallax
     if (heroT === 1 && !reduced) {
-      const a = t * 0.06;
-      targetPos.set(Math.cos(a) * 30 + mouse.x * 3, 15 + mouse.y * 2, Math.sin(a) * 30);
-      targetLook.set(mouse.x * 2, 3, mouse.y * -1.5);
+      targetPos.set(-7 + Math.sin(t * 0.25) * 0.8 + mouse.x * 1.5, 9 + Math.sin(t * 0.18) * 0.4 + mouse.y * 1, 0);
+      targetLook.set(7 + mouse.x * 4, 6.5 + mouse.y * 2.5, -70);
     }
     const k = reduced ? 1 : 1 - Math.exp(-dt * 3.2);
     camPos.lerp(targetPos, k);
