@@ -1,7 +1,7 @@
 ---
 import Base from "../layouts/Base.astro";
 import LineDemo from "../components/LineDemo.astro";
-import { site, mailto } from "../data/site";
+import { site, mailto, services } from "../data/site";
 import { works, more } from "../data/works";
 import repos from "../data/repos.json";
 
@@ -32,7 +32,7 @@ const since = repos.map((r) => r.y).sort()[0];
   <section class="hero" id="top">
     <div class="hero-in wrap">
       <h1 class="display" data-lines>Ando</h1>
-      <p class="lead" data-reveal>Web、EC、AI の自動化、ハードウェア、ゲーム。作って、動かして、渡すところまでやるフリーランスの開発者です。後ろの街は私の GitHub の全リポジトリで、高さがコミット数、色が言語。カーソルで触れると名前が出ます。</p>
+      <p class="lead" data-reveal>フリーランスで開発をしている Ando です。Web サイトや EC から、LINE の自動応対、AI を使った業務の自動化、Raspberry Pi の制御、Godot のゲームまで、頼まれた物も自分が欲しかった物も作ってきました。後ろに並んでいるのは私の GitHub にある全部のリポジトリで、塔の高さがコミットの数、色が使った言語です。カーソルを当てると名前が出ます。</p>
       <dl class="stats" data-reveal style="--d:1">
         <div><dt>リポジトリ</dt><dd class="mono"><span data-count={repos.length}>{repos.length}</span></dd></div>
         <div><dt>コミット</dt><dd class="mono"><span data-count={totalCommits}>{totalCommits.toLocaleString()}</span></dd></div>
@@ -52,7 +52,7 @@ const since = repos.map((r) => r.y).sort()[0];
     <div class="gallery-stage">
       <div class="gallery-head wrap">
         <h2 id="work-h">作った物</h2>
-        <p class="small muted">本物の画面。スクロールで次へ。<span class="mono" data-work-count></span></p>
+        <p class="small muted">画面を出せる物から順に並べています。スクロールすると次へ進みます。<span class="mono" data-work-count></span></p>
       </div>
       <ol class="wcards">
         {works.map((w, i) => (
@@ -71,11 +71,34 @@ const since = repos.map((r) => r.y).sort()[0];
     </div>
   </section>
 
+  <!-- 依頼できることと料金 -->
+  <section class="services" id="services" aria-labelledby="services-h">
+    <div class="wrap">
+      <h2 id="services-h" class="head" data-lines>依頼できることと料金の目安</h2>
+      <p class="lead" data-reveal>「相談ください」だけでは予算が組めないと思うので、よく頼まれる物に目安を付けておきます。実際の金額は、今の仕組みを見てから出します。</p>
+      <ul class="svc">
+        {services.map((sv, i) => (
+          <li class="svc-row" data-reveal style={`--d:${i % 3}`}>
+            <div class="svc-main">
+              <h3>{sv.item}</h3>
+              <p>{sv.note}</p>
+            </div>
+            <div class="svc-side">
+              <p class="svc-price">{sv.price}</p>
+              <p class="small muted">{sv.term}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+      <p class="small muted svc-note">稼働は{site.availability.hours}。{site.availability.reply}。{site.availability.start}。</p>
+    </div>
+  </section>
+
   <!-- 画面を出せない物 -->
   <section class="more" id="more" aria-labelledby="more-h">
     <div class="wrap">
-      <h2 id="more-h" class="head" data-lines>画面を出せない物も、動いています</h2>
-      <p class="lead" data-reveal>依頼主の守秘か、端末の中で動く物。何を作り、何を決め、どれだけの試験で守っているかを書きます。</p>
+      <h2 id="more-h" class="head" data-lines>画面を出せない物</h2>
+      <p class="lead" data-reveal>依頼主との守秘があるか、端末の中で動いている物なので、画面の代わりに中身と数字で説明します。</p>
       <ul class="rows">
         {more.map((m, i) => (
           <li class="row" data-reveal style={`--d:${i % 4}`}>
@@ -98,7 +121,7 @@ const since = repos.map((r) => r.y).sort()[0];
   <section class="repos" id="repos" aria-labelledby="repos-h">
     <div class="wrap">
       <h2 id="repos-h" class="head" data-lines>{repos.length} のリポジトリ、{totalCommits.toLocaleString()} コミット</h2>
-      <p class="lead" data-reveal>{since.replace("-", " 年 ")} 月から 2026 年 10 月まで。公開 {publicRepos.length}、非公開 {privateCount}。街の高さはこの数字から作っています。</p>
+      <p class="lead" data-reveal>{since.replace("-", " 年 ")} 月から 2026 年 10 月までの全部です。公開が {publicRepos.length}、非公開が {privateCount} あります。最初の画面の街は、この数字をそのまま高さにしています。</p>
       <div class="repos-grid">
         <ul class="langs" data-reveal>
           {byLang.map(([lang, v]) => (
@@ -126,33 +149,20 @@ const since = repos.map((r) => r.y).sort()[0];
     <div class="wrap demo-grid">
       <div>
         <h2 id="demo-h" class="head" data-lines>触ってみてください</h2>
-        <p class="lead" data-reveal>私が作る LINE 自動応対は、AI に返信文を書かせません。種類を判定して承認済みの定型文を選ぶだけ。選べなければ何も返さず、人へ回します。返信の事故は 1 回で信用を失うので、自動化の範囲を狭くしても事故 0 のほうが得です。</p>
+        <p class="lead" data-reveal>私が作る LINE の自動応対では、AI に返信の文章を書かせていません。AI がするのは問い合わせの種類を判定して、承認済みの定型文を選ぶところまでで、選べない時は何も返さずに人へ回します。返信の事故は一度で信用を失うので、自動化の範囲が狭くなっても事故がない方が得だと考えています。</p>
       </div>
       <div data-reveal style="--d:1"><LineDemo /></div>
     </div>
   </section>
 
-  <!-- 基盤 -->
+  <!-- 進め方と使う物 -->
   <section class="stack" id="stack" aria-labelledby="stack-h">
     <div class="wrap">
-      <h2 id="stack-h" class="head" data-lines>作って、動かして、渡す</h2>
-      <div class="stack-grid">
-        <div data-reveal>
-          <h3>作る</h3>
-          <p>TypeScript / Python / Next.js / Astro / Prisma / PostgreSQL / Redis / Docker。LINE Messaging API、Threads API、OpenAI と Claude の API。Three.js と GSAP（このサイト）。Godot。Raspberry Pi と ESP32。</p>
-        </div>
-        <div data-reveal style="--d:1">
-          <h3>動かす</h3>
-          <p>自社 VPS の Coolify で 15 プロジェクト、約 25 のアプリと 5 つの PostgreSQL を運用。GitHub の Deploy Key と App で自動配置。依頼主のサーバーに置く案件も同じ手順で。</p>
-        </div>
-        <div data-reveal style="--d:2">
-          <h3>渡す</h3>
-          <p>変更は全部履歴に残し、引き継ぎ資料を書く。本番に出す前に試験と影運用で確かめ、戻せる手順を先に用意する。AI には下書き・試験・調査をやらせ、判断と確認は私がする。</p>
-        </div>
-        <div data-reveal style="--d:3">
-          <h3>進め方</h3>
-          <p>チャットで 3 行（困っていること、今のやり方、いつまでに）もらえれば動けます。要望を「何ができれば完成か」の 1 枚に書き直して返し、確認は 1 往復で終わらせます。</p>
-        </div>
+      <h2 id="stack-h" class="head" data-lines>進め方と使う物</h2>
+      <div class="stack-text">
+        <p data-reveal>進め方は単純です。チャットで困っていること、今のやり方、いつまでに、の 3 行をもらえれば動けます。要望を「何ができれば完成か」という 1 枚に書き直して返し、確認は 1 往復で済ませます。本番に出す前に試験と影運用で確かめ、戻せる手順を先に用意します。終わったら変更の履歴と引き継ぎ資料を渡すので、私がいなくなっても困りません。AI には下書きと試験と調査をやらせていますが、判断と確認は私がします。</p>
+        <p data-reveal style="--d:1">使っている物は TypeScript と Python が中心で、Next.js、Astro、Prisma、PostgreSQL、Redis、Docker を日常的に使います。LINE Messaging API、Threads API、OpenAI と Claude の API、Three.js と GSAP（このサイトもそうです）、Godot、Raspberry Pi と ESP32 も扱います。</p>
+        <p data-reveal style="--d:2">動かす場所は自社 VPS の Coolify で、15 プロジェクト、約 25 のアプリと 5 つの PostgreSQL を運用しています。GitHub の Deploy Key と App で自動配置するので、依頼主のサーバーに置く案件も同じ手順でできます。</p>
       </div>
     </div>
   </section>
@@ -161,12 +171,13 @@ const since = repos.map((r) => r.y).sort()[0];
   <section class="contact" id="contact" aria-labelledby="contact-h">
     <div class="wrap">
       <h2 id="contact-h" class="head" data-lines>相談はメールで</h2>
-      <p class="lead" data-reveal>困っていること、今のやり方、希望時期の 3 つを書いて送ってください。次に確かめることを私が整理して返します。初回 60 分は無料、構築は 30 万円から、保守は月 3 万円から。</p>
+      <p class="lead" data-reveal>困っていること、今のやり方、希望の時期の 3 つを書いて送ってもらえれば、次に確かめることを整理して返します。初回の 60 分は無料で、構築は 30 万円から、保守は月 3 万円からです。</p>
       <p class="cta" data-reveal style="--d:1">
         <a class="button" href={mail}>メールで相談する</a>
         <a class="button ghost" href="https://github.com/rikimaru63/portfolio" rel="noopener">このサイトのコードを見る</a>
       </p>
       <p class="mono small muted">{site.email}</p>
+      <p class="small muted">{site.availability.hours}。{site.availability.reply}。</p>
     </div>
   </section>
 </Base>
@@ -222,8 +233,16 @@ const since = repos.map((r) => r.y).sort()[0];
   }
 
   /* ---------- sections on solid ground ---------- */
-  .more, .repos, .demo-sec, .stack, .contact { position: relative; z-index: 1; background: var(--bg); padding-block: clamp(5rem, 10vw, 9rem); }
-  .more { border-top: 1px solid var(--line); background: linear-gradient(to bottom, rgba(11, 15, 26, 0) 0, var(--bg) 160px); margin-top: -160px; padding-top: calc(160px + 5rem); }
+  .services, .more, .repos, .demo-sec, .stack, .contact { position: relative; z-index: 1; background: var(--bg); padding-block: clamp(5rem, 10vw, 9rem); }
+  .services { background: linear-gradient(to bottom, rgba(11, 15, 26, 0) 0, var(--bg) 160px); margin-top: -160px; padding-top: calc(160px + 5rem); }
+  .more { border-top: 1px solid var(--line); }
+  .svc { margin-top: 3rem; }
+  .svc-row { display: grid; gap: 0.8rem; padding: 1.6rem 0; border-top: 1px solid var(--line); }
+  @media (min-width: 48em) { .svc-row { grid-template-columns: 1fr 14rem; gap: 3rem; } }
+  .svc-row h3 { font-size: clamp(1.15rem, 1.6vw, 1.4rem); margin-bottom: 0.4rem; }
+  .svc-main p { color: var(--fg-2); }
+  .svc-price { font-family: var(--font-display); font-weight: 700; font-size: 1.4rem; color: var(--accent); }
+  .svc-note { margin-top: 2rem; }
   .more .lead, .repos .lead, .contact .lead, .demo-sec .lead { margin-top: 1rem; }
   .rows { margin-top: 3rem; display: grid; }
   .row { display: grid; gap: 1rem; padding: 2rem 0; border-top: 1px solid var(--line); }
@@ -243,10 +262,8 @@ const since = repos.map((r) => r.y).sort()[0];
   .demo-grid { display: grid; gap: 2.5rem; align-items: start; }
   @media (min-width: 48em) { .demo-grid { grid-template-columns: 5fr 7fr; gap: 4rem; } }
 
-  .stack-grid { margin-top: 3rem; display: grid; gap: 2.5rem; }
-  @media (min-width: 48em) { .stack-grid { grid-template-columns: repeat(2, 1fr); gap: 3rem 4rem; } }
-  .stack-grid h3 { font-size: 1.3rem; margin-bottom: 0.6rem; color: var(--accent); }
-  .stack-grid p { color: var(--fg-2); }
+  .stack-text { margin-top: 2.5rem; display: grid; gap: 1.5rem; max-width: 62ch; }
+  .stack-text p { color: var(--fg-2); }
 
   .contact .cta { margin-top: 2rem; display: flex; gap: 0.8rem; flex-wrap: wrap; }
   .contact .mono { margin-top: 1.5rem; }
