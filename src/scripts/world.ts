@@ -203,10 +203,12 @@ export function startWorld(o: WorldOptions) {
       curve.getPointAt(u, targetPos);
       lookCurve.getPointAt(u, targetLook);
     }
-    // 今どの画面の前にいるか
-    const segs = o.works.length;
-    const lead = 3 / (segs + 3); // the first three points are the descent
-    const i = u <= lead ? -1 : Math.min(segs - 1, Math.round(((u - lead) / (1 - lead)) * (segs - 1)));
+    // 今どの画面の前にいるか: カメラの目標位置に最も近い停止点
+    let i = -1;
+    if (u > 0 && targetPos.z < path[0].pos.z + 12) {
+      let best = Infinity;
+      path.forEach((p, k) => { const d = Math.abs(p.pos.z - targetPos.z); if (d < best) { best = d; i = k; } });
+    }
     if (i !== currentWork) { currentWork = i; o.onWork(i); }
   };
 
