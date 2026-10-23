@@ -8,10 +8,10 @@ Astro で作った静的サイト。`main` に push すると GitHub Actions が
 
 | 場所 | 中身 |
 |---|---|
-| `src/pages/index.astro` | トップ。3D の街（最初の画面）、本物の画面を 3D で順に通る「作った物」、画面を出せない物、全リポジトリ、LINE 振り分けの実演、基盤、連絡 |
-| `src/scripts/world.ts` | Three.js r186 の 3D。67 リポジトリの実データを街に（高さ＝コミット、色＝言語、公開は屋根が明るい）、スクロールで通路を進み、本物の画面を貼った 3D スクリーンの前で止まる。bloom、霧、格子の床のシェーダー。スマホは軽い設定 |
+| `src/pages/index.astro` | トップ。本物の画面が並ぶ 3D の通路（最初の画面から見える）、スクロールで順に近づく「作った物」、料金つきの依頼できること、画面を出せない物、全リポジトリ、LINE 振り分けの実演、進め方、連絡 |
+| `src/scripts/world.ts` | Three.js r186 の 3D。本物の画面を貼った 3D スクリーンを通路に並べ、最初の画面ではその入口から奥を見る。スクロールで各スクリーンの前に止まり、カーソルを当てると題名が出る。bloom、霧、格子の床のシェーダー。スマホは軽い設定。67 リポジトリの街は作ったが、依頼主の関心と合わないので外した（コードは残してある） |
 | `src/scripts/motion.ts` | 動きの層の起動。GSAP ScrollTrigger / SplitText、Lenis、数字のカウント、3D の起動と WebGL が無い時の退避 |
-| `src/data/repos.json` | GitHub の全リポジトリ（名前は公開分のみ、言語・コミット数・作成月）。実績台帳（依頼主名を含むので非公開の wiki リポジトリに置く）の調査で取得 |
+| `src/data/repos.json` | GitHub の全リポジトリ（名前は公開分のみ、言語・コミット数・作成月）。「全リポジトリ」の節で使う |
 | `src/data/works.ts` | 作った物。本物の画面がある物（`public/work/*.jpg`）と、画面を出せない物 |
 | `src/components/LineDemo.astro` と `src/scripts/router.ts` | 触れる物。打った文の種類を判定して、承認済みの定型文を選ぶか人へ回す |
 | `src/content/cases/*.md` | 事例の詳細。1 件 1 ファイル |
