@@ -1,0 +1,81 @@
+/* 3D の体験型。地は深い藍、文字は生成り、強調は一色（緑青）。 */
+:root {
+  --bg: #0b0f1a;
+  --bg-2: #121829;
+  --fg: #eef0f4;
+  --fg-2: #b4bccc;
+  --fg-3: #6f7a90;
+  --accent: #5ee0c2;
+  --accent-ink: #06231c;
+  --line: rgba(238, 240, 244, 0.12);
+  --font-display: "Bricolage Grotesque", "Zen Kaku Gothic New", "Hiragino Sans", sans-serif;
+  --font-text: "Zen Kaku Gothic New", "Hiragino Sans", "Noto Sans JP", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  --margin: clamp(1rem, 3vw, 3rem);
+  --max: 1480px;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+:root[data-theme="light"], :root[data-theme="dark"] { color-scheme: dark; }
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; overflow-x: clip; }
+body {
+  margin: 0; background: var(--bg); color: var(--fg);
+  font-family: var(--font-text); font-size: 16px; line-height: 1.8; font-feature-settings: "palt";
+  -webkit-font-smoothing: antialiased; overflow-x: clip;
+}
+@media (min-width: 48em) { body { font-size: 17px; } }
+h1, h2, h3, p, figure, ul, ol, dl, dd { margin: 0; }
+ul[class], ol[class] { padding: 0; list-style: none; }
+img, video, canvas, svg { display: block; max-width: 100%; }
+img, video { height: auto; }
+button, input, textarea { font: inherit; color: inherit; }
+button { background: none; border: 0; padding: 0; cursor: pointer; }
+a { color: inherit; text-decoration: none; }
+::selection { background: var(--accent); color: var(--accent-ink); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+h1, h2, h3 { font-family: var(--font-display); font-weight: 700; line-height: 1.1; letter-spacing: -0.02em; text-wrap: balance; overflow-wrap: break-word; min-width: 0; }
+.display { font-size: clamp(3rem, 9vw, 9.5rem); line-height: 0.95; letter-spacing: -0.04em; font-weight: 800; }
+.head { font-size: clamp(2rem, 4.5vw, 4.25rem); }
+.lead { font-size: clamp(1.1rem, 1.5vw, 1.4rem); line-height: 1.6; color: var(--fg-2); max-width: 36em; }
+.small { font-size: 0.875rem; line-height: 1.6; }
+.muted { color: var(--fg-3); }
+.mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.wrap { max-width: var(--max); margin-inline: auto; padding-inline: var(--margin); }
+p { max-width: 62ch; text-wrap: pretty; }
+
+.link { text-decoration: underline; text-decoration-color: transparent; text-underline-offset: 0.25em; text-decoration-thickness: 1px; transition: text-decoration-color 180ms ease, color 180ms ease; }
+@media (hover: hover) and (pointer: fine) { .link:hover { text-decoration-color: currentColor; color: var(--accent); } }
+
+/* ボタン: 四角、一色。押したら沈む */
+.button {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.6em; min-height: 54px; padding: 0 1.5em;
+  background: var(--accent); color: var(--accent-ink); font-weight: 700; line-height: 1.2; border-radius: 4px;
+  transition: transform 140ms var(--ease-out), background-color 180ms ease;
+}
+.button:active { transform: scale(0.97); }
+.button.ghost { background: transparent; color: var(--fg); box-shadow: inset 0 0 0 1px var(--line); }
+@media (hover: hover) and (pointer: fine) {
+  .button:hover { background: #8df0d8; }
+  .button.ghost:hover { background: rgba(238, 240, 244, 0.08); }
+}
+
+/* 見出しの行が下から出る。script が無ければそのまま見える */
+[data-lines] .line { display: block; overflow: clip; padding-bottom: 0.1em; margin-bottom: -0.1em; }
+[data-lines] .line > span { display: block; }
+@media (prefers-reduced-motion: no-preference) {
+  html.js .is-split .line > span { transform: translateY(110%); }
+  html.js .is-split.is-in .line > span { transform: none; transition: transform 1000ms var(--ease-expo) calc(var(--i, 0) * 90ms); }
+  html.js [data-reveal] { opacity: 0; transform: translateY(28px); transition: opacity 800ms var(--ease-out), transform 1000ms var(--ease-expo); transition-delay: calc(var(--d, 0) * 80ms); }
+  html.js [data-reveal].is-in { opacity: 1; transform: none; }
+}
+
+@view-transition { navigation: auto; }
+::view-transition-old(root) { animation: vt-leave 180ms ease-in both; }
+::view-transition-new(root) { animation: vt-arrive 360ms var(--ease-out) 40ms both; }
+@keyframes vt-leave { to { opacity: 0; } }
+@keyframes vt-arrive { from { opacity: 0; transform: translateY(12px); } }
+@media (prefers-reduced-motion: reduce) { @view-transition { navigation: none; } }

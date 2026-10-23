@@ -1,0 +1,11 @@
+---
+import Base from "../layouts/Base.astro";
+const base = import.meta.env.BASE_URL.replace(/\/$/, "") + "/";
+---
+
+<Base title="ページが見つかりません | Ando.">
+  <div class="wrap" style="padding: 4rem 16px;">
+    <h1>ページが見つかりません</h1>
+    <p>移動したか、消したページです。<a href={base}>トップへ戻る</a></p>
+  </div>
+</Base>

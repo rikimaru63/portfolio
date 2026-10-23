@@ -1,22 +1,57 @@
 # Ando Portfolio
 
-公開URL: <https://rikimaru63.github.io/portfolio/>
+公開 URL: <https://rikimaru63.github.io/portfolio/>
 
-`main` ブランチの `/docs` を GitHub Pages で公開しています。
+Astro で作った静的サイト。`main` に push すると GitHub Actions がビルドして GitHub Pages へ出す。
 
-## 方針
+## 構成
 
-- 実績は守秘義務に合わせて匿名化する。
-- クライアント名、認証情報、非公開URL、売上などの機密情報を掲載しない。
-- 架空の制作実績ではなく、実際に担当した領域と対応内容を掲載する。
-- 「対応できる実装パターン」と「実際に対応した事例」を分け、実績を水増ししない。
-- 事例画像は実装内容を説明するための生成イメージとし、実在する顧客画面を使わない。
-- 公開前にスマートフォン表示・リンク・文章を確認する。
+| 場所 | 中身 |
+|---|---|
+| `src/pages/index.astro` | トップ。本物の画面が並ぶ 3D の通路（最初の画面から見える）、スクロールで順に近づく「作った物」、料金つきの依頼できること、画面を出せない物、全リポジトリ、LINE 振り分けの実演、進め方、連絡 |
+| `src/scripts/world.ts` | Three.js r186 の 3D。本物の画面を貼った 3D スクリーンを通路に並べ、最初の画面ではその入口から奥を見る。スクロールで各スクリーンの前に止まり、カーソルを当てると題名が出る。bloom、霧、格子の床のシェーダー。スマホは軽い設定。67 リポジトリの街は作ったが、依頼主の関心と合わないので外した（コードは残してある） |
+| `src/scripts/motion.ts` | 動きの層の起動。GSAP ScrollTrigger / SplitText、Lenis、数字のカウント、3D の起動と WebGL が無い時の退避 |
+| `src/data/repos.json` | GitHub の全リポジトリ（名前は公開分のみ、言語・コミット数・作成月）。「全リポジトリ」の節で使う |
+| `src/data/works.ts` | 作った物。本物の画面がある物（`public/work/*.jpg`）と、画面を出せない物 |
+| `src/components/LineDemo.astro` と `src/scripts/router.ts` | 触れる物。打った文の種類を判定して、承認済みの定型文を選ぶか人へ回す |
+| `src/content/cases/*.md` | 事例の詳細。1 件 1 ファイル |
+| `public/demo/` | 架空の業種で作った Web サイトの作例 3 本 |
+| `scripts/check-dist.mjs` | ビルド結果の検査（リンク切れ・meta・架空表示・使わない言い回し） |
+| `.claude/skills/` | デザイン（taste-skill、impeccable）、文章（humanizer、humanizer-japanese）、Three.js と GSAP の公式スキル |
 
-## ローカル検査
+## デザインの決め方
 
-Node.js の標準機能だけで、公開対象のリンク、画像、HTML構造、架空デモの安全表示をまとめて確認します。
+- 方向は本人が「3D・WebGL の体験型」を選んだ（2026-10-23）。参考は brunosimon.com と tomoyaokada.com。
+- 着想は主題から。本人の GitHub の全リポジトリが街になり、本物の画面が 3D のスクリーンになる。数字は全部実測。
+- 文章は humanizer と humanizer-japanese の規則で書く。架空の実績・お客様の声は書かない。依頼主の製品は「依頼主の製品」と明記し、載せるかは本人が決める。
+- 画面の撮影は `scratchpad/shooter/shoot.mjs`（playwright-core＋Chromium、SwiftShader で WebGL）で、スクロール位置ごとに行う。
 
-```powershell
-node scripts/check-static-site.mjs
+## 検査
+
+```sh
+npm install
+npm run build
+npm run check                     # astro check + dist の検査
+node .claude/skills/design-taste-frontend/scripts/lint.mjs src
+npx astro preview --port 4399 &   # 実ブラウザ検査は URL に対して
+CHROME_PATH=/path/to/chrome node .claude/skills/design-taste-frontend/scripts/inspect.mjs http://localhost:4399/portfolio/ --out .taste-skill/roundN
 ```
+
+`inspect.mjs` は 1440 / 768 / 390 で測り、スクリーンショットを `.taste-skill/roundN/` に置く。FAIL が 0 になるまで直す。
+
+## 公開の切り替え（初回だけ）
+
+いままでは `main` の `/docs` を GitHub Pages が直接配信していた。この版からは Actions でビルドするので、リポジトリの設定を 1 回だけ変える。
+
+```sh
+GH_TOKEN=$(gh auth token --user rikimaru63) gh api -X PUT repos/rikimaru63/portfolio/pages -f build_type=workflow
+```
+
+画面でやるなら Settings → Pages → Build and deployment → Source を「GitHub Actions」にする。
+
+## 公開前に本人が確認する所
+
+- 依頼主の製品の画面を載せてよいか（`src/data/works.ts` の `client: true`。名称とロゴはぼかし、リンクは付けていない）
+- `src/data/site.ts` の料金の目安・稼働条件（提案値のまま）
+- 顔写真か名前を出すか
+- 実績台帳（非公開の wiki リポジトリ `plans/`）の「本人に確認する物」

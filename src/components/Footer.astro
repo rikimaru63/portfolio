@@ -1,0 +1,21 @@
+---
+const base = import.meta.env.BASE_URL.replace(/\/$/, "") + "/";
+const year = new Date().getFullYear();
+---
+
+<footer class="ft wrap">
+  <p class="muted small">{year} Ando / Logence</p>
+  <nav aria-label="フッター" class="small">
+    <a class="link" href={`${base}#work`}>作った物</a>
+    <a class="link" href="https://github.com/rikimaru63/portfolio" rel="noopener">このサイトのコード</a>
+    <a class="link" href="https://github.com/rikimaru63" rel="noopener">GitHub</a>
+  </nav>
+  <p class="muted small right">依頼主の案件は、名前と画面を伏せるか確認したうえで載せています。数字は GitHub と各リポジトリで数えた物です</p>
+</footer>
+
+<style>
+  .ft { position: relative; z-index: 1; background: var(--bg); display: grid; grid-template-columns: 1fr auto 1fr; align-items: baseline; gap: 1.5rem; padding-block: 2rem 2.5rem; border-top: 1px solid var(--line); }
+  nav { display: flex; gap: 1.5rem; }
+  .right { text-align: right; }
+  @media (max-width: 47.99em) { .ft { grid-template-columns: 1fr; gap: 0.6rem; } .right { text-align: left; } }
+</style>

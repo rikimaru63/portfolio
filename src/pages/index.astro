@@ -1,0 +1,268 @@
+---
+import Base from "../layouts/Base.astro";
+import LineDemo from "../components/LineDemo.astro";
+import { site, mailto, services } from "../data/site";
+import { works, more } from "../data/works";
+import repos from "../data/repos.json";
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, "") + "/";
+const mail = mailto();
+const caseUrl = (id: string) => `${base}cases/${id}/`;
+
+const totalCommits = repos.reduce((a, r) => a + r.c, 0);
+const byLang = Object.entries(
+  repos.reduce<Record<string, { n: number; c: number }>>((acc, r) => {
+    const k = r.l === "-" ? "文書・設定" : r.l;
+    acc[k] = acc[k] || { n: 0, c: 0 };
+    acc[k].n++; acc[k].c += r.c;
+    return acc;
+  }, {})
+).sort((a, b) => b[1].c - a[1].c);
+const maxLangC = Math.max(...byLang.map(([, v]) => v.c));
+const publicRepos = repos.filter((r) => r.p);
+const privateCount = repos.length - publicRepos.length;
+const since = repos.map((r) => r.y).sort()[0];
+---
+
+<Base>
+  <canvas id="world" class="world" aria-hidden="true"></canvas>
+  <div id="tip" class="tip mono small" hidden></div>
+
+  <!-- 最初の画面: 本物の画面が並ぶ通路の入口 -->
+  <section class="hero" id="top">
+    <div class="hero-in wrap">
+      <h1 class="display" data-lines>Ando</h1>
+      <p class="hero-what" data-reveal>LINE の返信、入金の確認、ネットショップの更新。毎日だれかが手でやっている仕事を、止まらない仕組みに置き換えています。</p>
+      <p class="lead" data-reveal style="--d:1">たとえば後ろに見えているトレーディングカードの店は、商品 9,641 点を売ったまま 11 か月改修を続けています。スクロールすると、動いている物を順に見られます。</p>
+      <p class="stats-line mono small muted" data-reveal style="--d:2">本番で動く物 15 · 自動テスト 4,993 件 · GitHub {repos.length} リポジトリ {totalCommits.toLocaleString()} コミット</p>
+      <p class="cta" data-reveal style="--d:3">
+        <a class="button" href="#work">作った物を見る</a>
+        <a class="button ghost" href="#services">こんな時に呼んでください</a>
+      </p>
+    </div>
+    <p class="hint small mono muted" aria-hidden="true">スクロールで進む</p>
+  </section>
+
+  <!-- 作った物: スクロールで画面の前を順に通る -->
+  <section class="gallery" id="work" data-gallery style={`--n:${works.length}`} aria-labelledby="work-h">
+    <div class="gallery-stage">
+      <div class="gallery-head wrap">
+        <h2 id="work-h">作った物</h2>
+        <p class="small muted">画面を出せる物から順に並べています。スクロールすると次へ進みます。<span class="mono" data-work-count></span></p>
+      </div>
+      <ol class="wcards">
+        {works.map((w, i) => (
+          <li class:list={["wcard", { "is-on": i === 0 }]} data-work-card data-id={w.id} data-img={w.img}>
+            <img class="wcard-img" src={`${base}work/${w.img}`} alt={`${w.title}の画面`} width="1600" height="1000" loading="lazy" />
+            <div class="wcard-body">
+              <p class="mono small muted">{String(i + 1).padStart(2, "0")} / {String(works.length).padStart(2, "0")}{w.client ? " · 依頼主の製品" : ""}</p>
+              <h3>{w.title}</h3>
+              <p class="wcard-what">{w.what}</p>
+              <p class="small"><span class="muted">使った物</span> {w.tech}<br /><span class="muted">状態</span> {w.fact}</p>
+              {w.url && <a class="link small" href={w.url} rel="noopener" target="_blank">実物を開く</a>}
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- 依頼できることと料金 -->
+  <section class="services" id="services" aria-labelledby="services-h">
+    <div class="wrap">
+      <h2 id="services-h" class="head" data-lines>こんな時に呼んでください</h2>
+      <p class="lead" data-reveal>まず 60 分、無料で話します。作るべきか、直すべきか、買った方が早いかを、その場で答えます。その先の目安を書いておきます。実際の金額は今の仕組みを見てから出します。</p>
+      <ul class="svc">
+        {services.map((sv, i) => (
+          <li class="svc-row" data-reveal style={`--d:${i % 3}`}>
+            <div class="svc-main">
+              <h3>「{sv.pain}」</h3>
+              <p>{sv.what}</p>
+            </div>
+            <div class="svc-side">
+              <p class="svc-price">{sv.price}</p>
+              <p class="small muted">{sv.term}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+      <p class="small muted svc-note">稼働は{site.availability.hours}。{site.availability.reply}。{site.availability.start}。</p>
+    </div>
+  </section>
+
+  <!-- 画面を出せない物 -->
+  <section class="more" id="more" aria-labelledby="more-h">
+    <div class="wrap">
+      <h2 id="more-h" class="head" data-lines>画面を出せない物</h2>
+      <p class="lead" data-reveal>依頼主との守秘があるか、端末の中で動いている物なので、画面の代わりに中身と数字で説明します。</p>
+      <ul class="rows">
+        {more.map((m, i) => (
+          <li class="row" data-reveal style={`--d:${i % 4}`}>
+            <div class="row-main">
+              <h3>{m.title}</h3>
+              <p>{m.what}</p>
+            </div>
+            <div class="row-side small">
+              <p><span class="muted">使った物</span><br />{m.tech}</p>
+              <p><span class="muted">規模</span><br /><span class="mono">{m.fact}</span></p>
+              {m.href && <a class="link" href={caseUrl(m.href)}>詳しく読む</a>}
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- 全リポジトリ -->
+  <section class="repos" id="repos" aria-labelledby="repos-h">
+    <div class="wrap">
+      <h2 id="repos-h" class="head" data-lines>{repos.length} のリポジトリ、{totalCommits.toLocaleString()} コミット</h2>
+      <p class="lead" data-reveal>{since.replace("-", " 年 ")} 月から 2026 年 10 月までの全部です。公開が {publicRepos.length}、非公開が {privateCount} あります。</p>
+      <div class="repos-grid">
+        <ul class="langs" data-reveal>
+          {byLang.map(([lang, v]) => (
+            <li>
+              <span class="lang-name">{lang}</span>
+              <span class="bar" style={`--w:${Math.max(2, (v.c / maxLangC) * 100)}%`}></span>
+              <span class="mono small">{v.c.toLocaleString()} <span class="muted">/ {v.n}</span></span>
+            </li>
+          ))}
+        </ul>
+        <div class="pub" data-reveal style="--d:1">
+          <p class="small muted">公開しているリポジトリ</p>
+          <ul class="pub-list mono small">
+            {publicRepos.map((r) => (
+              <li><a class="link" href={`https://github.com/rikimaru63/${r.n}`} rel="noopener">{r.n}</a> <span class="muted">{r.c}</span></li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 触れる物 -->
+  <section class="demo-sec" id="demo" aria-labelledby="demo-h">
+    <div class="wrap demo-grid">
+      <div>
+        <h2 id="demo-h" class="head" data-lines>触ってみてください</h2>
+        <p class="lead" data-reveal>一番心配されるのは、AI が勝手に変なことを返さないか、だと思います。だから私が作る LINE の自動応対では、AI に文章を書かせていません。問い合わせの種類を判定して承認済みの定型文を選ぶところまでで、選べない時は何も返さずに人へ回します。返信の事故は一度で信用を失うので、自動化の範囲が狭くなっても事故がない方が得だと考えています。下で実際に打ってみてください。</p>
+      </div>
+      <div data-reveal style="--d:1"><LineDemo /></div>
+    </div>
+  </section>
+
+  <!-- 進め方と使う物 -->
+  <section class="stack" id="stack" aria-labelledby="stack-h">
+    <div class="wrap">
+      <h2 id="stack-h" class="head" data-lines>頼んだ後に何が起きるか</h2>
+      <div class="stack-text">
+        <p data-reveal>最初はチャットで 3 行です。困っていること、今のやり方、いつまでに。仕様書はいりません。私が要望を「何ができれば完成か」という 1 枚に書き直して返すので、それに丸を付けてもらえば作り始めます。確認はその 1 往復で済ませます。</p>
+        <p data-reveal style="--d:1">作っている間は、動いている物を止めません。本番と分けた複製で作り、試験を通し、戻せる手順を先に用意してから出します。LINE のような相手のいる物は、判定だけして送らない期間を置いて、人の判断と突き合わせてから切り替えます。</p>
+        <p data-reveal style="--d:2">終わったら、変更の履歴と引き継ぎ資料を渡します。社内の担当者や別の会社に渡しても読める形にするので、私に縛られることはありません。AI には下書きと試験と調査をやらせていますが、判断と確認は私がします。</p>
+        <p class="small muted" data-reveal style="--d:3">道具は TypeScript と Python が中心で、Next.js、Astro、Prisma、PostgreSQL、Redis、Docker を日常的に使います。LINE Messaging API、Threads API、OpenAI と Claude の API、Three.js と GSAP（このサイトもそうです）、Godot、Raspberry Pi と ESP32 も扱います。動かす場所は自社 VPS の Coolify で、15 プロジェクト、約 25 のアプリと 5 つの PostgreSQL を運用しています。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 連絡 -->
+  <section class="contact" id="contact" aria-labelledby="contact-h">
+    <div class="wrap">
+      <h2 id="contact-h" class="head" data-lines>手でやっている仕事は、人が辞めた日に止まります</h2>
+      <p class="lead" data-reveal>そうなる前に、60 分だけ話しませんか。無料です。メールに、困っていること、今のやり方、いつまでに、の 3 行を書いて送ってください。翌営業日までに、作るか直すか買うかの判断と、だいたいの金額を返します。合わなければそれで終わりで構いません。</p>
+      <p class="cta" data-reveal style="--d:1">
+        <a class="button" href={mail}>60 分の相談を申し込む（無料）</a>
+        <a class="button ghost" href="https://github.com/rikimaru63/portfolio" rel="noopener">このサイトのコードを見る</a>
+      </p>
+      <p class="mono small muted">{site.email}</p>
+      <p class="small muted">{site.availability.hours}。{site.availability.reply}。</p>
+    </div>
+  </section>
+</Base>
+
+<script is:inline define:vars={{ base }}>
+  document.body.dataset.base = base;
+</script>
+
+<style>
+  .world { position: fixed; inset: 0; width: 100vw; height: 100svh; z-index: 0; }
+  html.no-webgl .world { display: none; }
+  .tip { position: fixed; left: 0; top: 0; z-index: 30; pointer-events: none; padding: 0.5em 0.8em; background: rgba(11, 15, 26, 0.85); border: 1px solid var(--line); border-radius: 6px; display: grid; gap: 0.1em; backdrop-filter: blur(6px); }
+  .tip b { color: var(--accent); font-weight: 600; }
+  .tip[hidden] { display: none; }
+
+  /* ---------- hero ---------- */
+  .hero { position: relative; z-index: 1; min-height: 100svh; display: grid; align-items: center; padding-block: 96px 64px; }
+  .hero::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(90deg, rgba(11, 15, 26, 0.9) 0%, rgba(11, 15, 26, 0.6) 36%, rgba(11, 15, 26, 0) 60%); }
+  .hero-in { position: relative; }
+  @media (max-width: 47.99em) { .hero::before { background: linear-gradient(180deg, rgba(11, 15, 26, 0.2) 0%, rgba(11, 15, 26, 0.75) 45%, rgba(11, 15, 26, 0.85) 100%); } }
+  .hero-in { display: grid; gap: 1.4rem; max-width: 40rem; margin-inline: 0; padding-inline: var(--margin); }
+  .hero-what { font-size: clamp(1.2rem, 1.9vw, 1.7rem); line-height: 1.55; font-weight: 500; max-width: 24em; }
+  .stats { display: grid; grid-template-columns: repeat(2, auto); gap: 1rem 2.5rem; width: max-content; }
+  @media (min-width: 48em) { .stats { grid-template-columns: repeat(4, auto); } }
+  .stats dt { font-size: 0.8rem; color: var(--fg-3); }
+  .stats dd { font-size: clamp(1.6rem, 3vw, 2.4rem); line-height: 1.1; font-weight: 600; }
+  .stats small { font-size: 0.5em; margin-left: 0.3em; color: var(--fg-2); font-family: var(--font-text); font-weight: 400; }
+  .cta { display: flex; gap: 0.8rem; flex-wrap: wrap; }
+  .hint { position: absolute; left: var(--margin); bottom: 24px; }
+  html.no-webgl .hero .lead::after { content: " （3D 表示に対応していない環境では、下の一覧で同じ物が見られます）"; }
+
+  /* ---------- gallery ---------- */
+  .gallery { position: relative; z-index: 1; height: calc((var(--n) + 3) * 100svh); }
+  html.no-webgl .gallery { height: auto; }
+  .gallery-stage { position: sticky; top: 0; height: 100svh; display: grid; grid-template-rows: auto 1fr; pointer-events: none; }
+  html.no-webgl .gallery-stage { position: static; height: auto; pointer-events: auto; }
+  .gallery-head { padding-top: 80px; display: flex; align-items: baseline; gap: 1.5rem; flex-wrap: wrap; }
+  .gallery-head h2 { font-size: clamp(1.4rem, 2.5vw, 2rem); }
+  .wcards { position: relative; align-self: end; margin: 0 var(--margin) 32px; }
+  .wcard { position: absolute; left: 0; bottom: 0; width: min(100%, 30rem); opacity: 0; transform: translateY(16px); transition: opacity 500ms ease, transform 700ms var(--ease-expo); pointer-events: none; }
+  .wcard.is-on { opacity: 1; transform: none; pointer-events: auto; }
+  .wcard-body { padding: 1.2rem 1.4rem; background: rgba(11, 15, 26, 0.72); backdrop-filter: blur(10px); border: 1px solid var(--line); border-radius: 8px; display: grid; gap: 0.5rem; }
+  .wcard h3 { font-size: clamp(1.3rem, 2vw, 1.8rem); }
+  .wcard-what { color: var(--fg-2); font-size: 0.95rem; }
+  .wcard-img { display: none; }
+  html.no-webgl .wcards { position: static; margin: 2rem 0; display: grid; gap: 2rem; }
+  html.no-webgl .wcard { position: static; opacity: 1; transform: none; width: auto; pointer-events: auto; display: grid; gap: 1rem; }
+  html.no-webgl .wcard-img { display: block; border-radius: 8px; }
+  @media (max-width: 47.99em) {
+    .gallery-head { padding-top: 72px; }
+    .wcard { width: 100%; }
+    .wcard-body { padding: 1rem; }
+    .wcard-what { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  }
+
+  /* ---------- sections on solid ground ---------- */
+  .services, .more, .repos, .demo-sec, .stack, .contact { position: relative; z-index: 1; background: var(--bg); padding-block: clamp(5rem, 10vw, 9rem); }
+  .services { background: linear-gradient(to bottom, rgba(11, 15, 26, 0) 0, var(--bg) 160px); margin-top: -160px; padding-top: calc(160px + 5rem); }
+  .more { border-top: 1px solid var(--line); }
+  .svc { margin-top: 3rem; }
+  .svc-row { display: grid; gap: 0.8rem; padding: 1.6rem 0; border-top: 1px solid var(--line); }
+  @media (min-width: 48em) { .svc-row { grid-template-columns: 1fr 14rem; gap: 3rem; } }
+  .svc-row h3 { font-size: clamp(1.1rem, 1.5vw, 1.35rem); margin-bottom: 0.5rem; font-weight: 600; }
+  .svc-main p { color: var(--fg-2); }
+  .svc-price { font-family: var(--font-display); font-weight: 700; font-size: 1.4rem; color: var(--accent); }
+  .svc-note { margin-top: 2rem; }
+  .more .lead, .repos .lead, .contact .lead, .demo-sec .lead { margin-top: 1rem; }
+  .rows { margin-top: 3rem; display: grid; }
+  .row { display: grid; gap: 1rem; padding: 2rem 0; border-top: 1px solid var(--line); }
+  @media (min-width: 48em) { .row { grid-template-columns: 1fr 18rem; gap: 3rem; } }
+  .row h3 { font-size: clamp(1.25rem, 1.8vw, 1.6rem); margin-bottom: 0.5rem; }
+  .row-main p { color: var(--fg-2); }
+  .row-side { display: grid; gap: 0.6rem; align-content: start; }
+
+  .repos-grid { margin-top: 3rem; display: grid; gap: 3rem; }
+  @media (min-width: 48em) { .repos-grid { grid-template-columns: 1.2fr 1fr; } }
+  .langs { display: grid; gap: 0.7rem; }
+  .langs li { display: grid; grid-template-columns: 8rem 1fr auto; align-items: center; gap: 1rem; }
+  .bar { height: 10px; border-radius: 2px; background: var(--accent); width: var(--w); opacity: 0.85; transform-origin: left; }
+  .pub-list { columns: 2; column-gap: 2rem; display: block; }
+  .pub-list li { break-inside: avoid; padding: 0.15em 0; }
+
+  .demo-grid { display: grid; gap: 2.5rem; align-items: start; }
+  @media (min-width: 48em) { .demo-grid { grid-template-columns: 5fr 7fr; gap: 4rem; } }
+
+  .stack-text { margin-top: 2.5rem; display: grid; gap: 1.5rem; max-width: 62ch; }
+  .stack-text p { color: var(--fg-2); }
+
+  .contact .cta { margin-top: 2rem; display: flex; gap: 0.8rem; flex-wrap: wrap; }
+  .contact .mono { margin-top: 1.5rem; }
+</style>

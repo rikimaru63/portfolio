@@ -1,0 +1,51 @@
+---
+import { getCollection, render } from "astro:content";
+import Base from "../../layouts/Base.astro";
+import { mailto } from "../../data/site";
+
+export async function getStaticPaths() {
+  const cases = await getCollection("cases");
+  return cases.map((c) => ({ params: { slug: c.id }, props: { entry: c } }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const d = entry.data;
+const base = import.meta.env.BASE_URL.replace(/\/$/, "") + "/";
+---
+
+<Base title={`${d.title} | Ando.`} description={d.oneLine}>
+  <article class="case wrap">
+    <p class="small"><a class="link" href={`${base}#more`}>作った物に戻る</a></p>
+    <h1 class="head" data-lines>{d.short}</h1>
+    <p class="lead">{d.title}</p>
+    <dl class="meta small" data-reveal>
+      <div><dt>時期</dt><dd>{d.period}</dd></div>
+      <div><dt>依頼主</dt><dd>{d.client}</dd></div>
+      <div><dt>担当した範囲</dt><dd>{d.scope.join("、")}</dd></div>
+      <div><dt>規模</dt><dd class="mono">{d.scale.join("、")}</dd></div>
+      <div><dt>使った物</dt><dd>{d.stack.join("、")}</dd></div>
+    </dl>
+    <div class="body">
+      <Content />
+    </div>
+    <p class="back"><a class="button" href={mailto()}>似た状況を相談する</a></p>
+  </article>
+</Base>
+
+<style>
+  .case { position: relative; z-index: 1; padding-top: 112px; padding-bottom: 8rem; max-width: 56rem; }
+  h1 { margin: 1rem 0; }
+  .meta { display: grid; gap: 1rem 2rem; grid-template-columns: 1fr; margin: 2.5rem 0; padding: 1.5rem; background: var(--bg-2); border-radius: 8px; }
+  @media (min-width: 48em) { .meta { grid-template-columns: repeat(2, 1fr); } }
+  .meta dt { color: var(--fg-3); }
+  .meta dd { margin: 0; }
+  .body :global(h2) { font-size: 1.4rem; margin: 2.5rem 0 0.8rem; color: var(--accent); }
+  .body :global(p) { color: var(--fg-2); }
+  .body :global(ul) { padding-left: 1.2em; list-style: disc; color: var(--fg-2); }
+  .body :global(li + li) { margin-top: 0.4em; }
+  .body :global(.flow) { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1.4rem 0 1.8rem; }
+  .body :global(.flow > li) { background: var(--bg-2); padding: 0.5em 0.9em; border-radius: 4px; font-size: 0.9rem; font-family: var(--mono); }
+  .body :global(.flow > li.alt) { background: rgba(255, 138, 92, 0.18); }
+  .back { margin-top: 3rem; }
+</style>
