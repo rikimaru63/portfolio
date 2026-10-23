@@ -10,17 +10,19 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 type Repo = { n: string; l: string; c: number; y: string; p: boolean };
 
-const LANG_COLOR: Record<string, number> = {
-  Python: 0x5ee0c2,
-  TypeScript: 0x6ea8ff,
-  JavaScript: 0xf5d76e,
-  GDScript: 0xc98bff,
-  HTML: 0xff8a5c,
-  CSS: 0xff6fa3,
-  Astro: 0xffb86b,
-  Shell: 0x9be37d,
-  "-": 0x8a93a6,
+// 言語ごとの色相。明るさと彩度は全部同じにして、どの言語も同じ強さで光らせる
+const LANG_HUE: Record<string, number> = {
+  Python: 0.47,      // 青緑
+  TypeScript: 0.60,  // 青
+  JavaScript: 0.12,  // 琥珀
+  GDScript: 0.75,    // 紫
+  HTML: 0.05,        // 朱
+  CSS: 0.90,         // 桃
+  Astro: 0.08,       // 橙
+  Shell: 0.33,       // 緑
+  "-": 0.62,         // 文書: 青灰
 };
+const hueOf = (l: string) => LANG_HUE[l] ?? LANG_HUE["-"];
 
 export type WorldOptions = {
   canvas: HTMLCanvasElement;
@@ -51,8 +53,8 @@ export function startWorld(o: WorldOptions) {
   const camera = new THREE.PerspectiveCamera(42, innerWidth / innerHeight, 0.1, 400);
 
   // ---------- light ----------
-  scene.add(new THREE.HemisphereLight(0x9fb4ff, 0x0b0f1a, 0.9));
-  const key = new THREE.DirectionalLight(0xffffff, 1.6);
+  scene.add(new THREE.HemisphereLight(0xcfd8ff, 0x141a2a, 1.3));
+  const key = new THREE.DirectionalLight(0xffffff, 1.9);
   key.position.set(18, 30, 10);
   scene.add(key);
 
@@ -60,7 +62,7 @@ export function startWorld(o: WorldOptions) {
   const floorMat = new THREE.ShaderMaterial({
     transparent: true,
     depthWrite: false,
-    uniforms: { uColor: { value: new THREE.Color(0x5ee0c2) }, uTime: { value: 0 } },
+    uniforms: { uColor: { value: new THREE.Color(0x4a6fb5) }, uTime: { value: 0 } },
     vertexShader: /* glsl */ `
       varying vec2 vUv; varying vec3 vPos;
       void main(){ vUv = uv; vec4 wp = modelMatrix * vec4(position,1.0); vPos = wp.xyz; gl_Position = projectionMatrix * viewMatrix * wp; }`,
@@ -72,7 +74,7 @@ export function startWorld(o: WorldOptions) {
         float d = length(vPos.xz);
         float fade = smoothstep(90.0, 10.0, d);
         float pulse = 0.5 + 0.5 * sin(uTime * 0.6 - d * 0.12);
-        gl_FragColor = vec4(uColor, line * fade * (0.08 + 0.06 * pulse));
+        gl_FragColor = vec4(uColor, line * fade * (0.10 + 0.05 * pulse));
         #include <tonemapping_fragment>
         #include <colorspace_fragment>
       }`,
@@ -89,7 +91,7 @@ export function startWorld(o: WorldOptions) {
   const gap = 2.6;
   const box = new THREE.BoxGeometry(1, 1, 1);
   box.translate(0, 0.5, 0); // grow from the floor
-  const bodyMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.55, metalness: 0.15 });
+  const bodyMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.42, metalness: 0.08 });
   const city = new THREE.InstancedMesh(box, bodyMat, n);
   const roofMat = new THREE.MeshBasicMaterial({ color: 0xffffff, toneMapped: false });
   const roofGeo = new THREE.BoxGeometry(1, 0.06, 1);
@@ -114,13 +116,16 @@ export function startWorld(o: WorldOptions) {
     place.rotation.set(0, 0, 0);
     place.updateMatrix();
     city.setMatrixAt(i, place.matrix);
-    color.setHex(LANG_COLOR[r.l] ?? LANG_COLOR["-"]);
-    city.setColorAt(i, color.clone().multiplyScalar(0.35));
+    const sat = r.l === "-" ? 0.12 : 0.45;
+    color.setHSL(hueOf(r.l), sat, 0.42);
+    city.setColorAt(i, color.clone());
     place.position.set(x, h, z);
     place.scale.set(w, 1, w);
     place.updateMatrix();
     roofs.setMatrixAt(i, place.matrix);
-    roofs.setColorAt(i, color.clone().multiplyScalar(r.p ? 2.2 : 1.1));
+    // 公開リポの屋根は、その言語の色のまま光る（白飛びさせない）
+    color.setHSL(hueOf(r.l), r.l === "-" ? 0.15 : 0.8, r.p ? 0.58 : 0.5);
+    roofs.setColorAt(i, color.clone().multiplyScalar(r.p ? 1.35 : 0.9));
   }
   city.instanceMatrix.needsUpdate = true;
   roofs.instanceMatrix.needsUpdate = true;
@@ -136,7 +141,7 @@ export function startWorld(o: WorldOptions) {
   const loader = new THREE.TextureLoader();
   const screenGeo = new THREE.PlaneGeometry(16, 10);
   const frameGeo = new THREE.PlaneGeometry(16.5, 10.5);
-  const frameMat = new THREE.MeshBasicMaterial({ color: 0x5ee0c2, toneMapped: false, transparent: true, opacity: 0.55 });
+  const frameMat = new THREE.MeshBasicMaterial({ color: 0x8fb4ff, toneMapped: false, transparent: true, opacity: 0.5 });
   const path: { pos: THREE.Vector3; look: THREE.Vector3 }[] = [];
   o.works.forEach((w, i) => {
     const mat = new THREE.MeshBasicMaterial({ color: 0x1a2236 });
@@ -172,7 +177,7 @@ export function startWorld(o: WorldOptions) {
   if (!small) {
     composer = new EffectComposer(renderer);
     composer.addPass(new RenderPass(scene, camera));
-    const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.45, 0.5, 1.02);
+    const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.38, 0.55, 1.0);
     composer.addPass(bloom);
     composer.addPass(new OutputPass());
   }
