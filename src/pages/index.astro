@@ -1,104 +1,92 @@
 ---
-import { getCollection } from "astro:content";
 import Base from "../layouts/Base.astro";
-import { site, mailto, pricing } from "../data/site";
+import LineDemo from "../components/LineDemo.astro";
+import { site, mailto } from "../data/site";
+import { works, more } from "../data/works";
+import repos from "../data/repos.json";
 
-const cases = (await getCollection("cases")).sort((a, b) => a.data.order - b.data.order);
 const base = import.meta.env.BASE_URL.replace(/\/$/, "") + "/";
 const mail = mailto();
+const caseUrl = (id: string) => `${base}cases/${id}/`;
+
+const totalCommits = repos.reduce((a, r) => a + r.c, 0);
+const byLang = Object.entries(
+  repos.reduce<Record<string, { n: number; c: number }>>((acc, r) => {
+    const k = r.l === "-" ? "文書・設定" : r.l;
+    acc[k] = acc[k] || { n: 0, c: 0 };
+    acc[k].n++; acc[k].c += r.c;
+    return acc;
+  }, {})
+).sort((a, b) => b[1].c - a[1].c);
+const maxLangC = Math.max(...byLang.map(([, v]) => v.c));
+const publicRepos = repos.filter((r) => r.p);
+const privateCount = repos.length - publicRepos.length;
+const since = repos.map((r) => r.y).sort()[0];
 ---
 
 <Base>
-  <section class="hero wrap">
-    <p class="role">Ando ／ フリーランスの開発者 ／ SNS で売る事業の裏方</p>
-    <h1>LINE の返信、入金の確認、競合の調査。<br />人がやらなくていい裏方の仕事を、コードにします。</h1>
-    <p class="lead">
-      発信者ご本人でも、事務局やディレクターの方でも、Slack か LINE で 3 行もらえれば動けます。仕様書はいりません。
-      動いている仕組みを止めずに直すのが得意で、AI に書かせた物は私が試験してから渡します。
-    </p>
-    <ul class="facts">
-      <li><strong>LINE の自動応対</strong><span>自動テスト 3,104 件、複数アカウントで本番運用中</span></li>
-      <li><strong>入金・契約の管理画面</strong><span>お客様のサーバーに置き、11 アカウント分を本番反映</span></li>
-      <li><strong>SNS 教材 2,848 本</strong><span>AI が媒体 × ジャンルで引ける知識ベースに</span></li>
-    </ul>
-    <p class="cta">
-      <a class="btn primary" href={mail}>メールで相談する</a>
-      <a class="btn" href="#cases">事例を読む</a>
-    </p>
+  <canvas id="world" class="world" aria-hidden="true"></canvas>
+  <div id="tip" class="tip mono small" hidden></div>
+
+  <!-- 最初の画面: 名前と、67 のリポジトリの街 -->
+  <section class="hero" id="top">
+    <div class="hero-in wrap">
+      <h1 class="display" data-lines>Ando</h1>
+      <p class="lead" data-reveal>Web、EC、AI の自動化、ハードウェア、ゲーム。作って、動かして、渡すところまでやるフリーランスの開発者です。後ろの街は私の GitHub の全リポジトリで、高さがコミット数、色が言語。カーソルで触れると名前が出ます。</p>
+      <dl class="stats" data-reveal style="--d:1">
+        <div><dt>リポジトリ</dt><dd class="mono"><span data-count={repos.length}>{repos.length}</span></dd></div>
+        <div><dt>コミット</dt><dd class="mono"><span data-count={totalCommits}>{totalCommits.toLocaleString()}</span></dd></div>
+        <div><dt>本番で動く物</dt><dd class="mono"><span data-count="15">15</span><small>プロジェクト</small></dd></div>
+        <div><dt>自動テスト</dt><dd class="mono"><span data-count="4993">4,993</span><small>件</small></dd></div>
+      </dl>
+      <p class="cta" data-reveal style="--d:2">
+        <a class="button" href="#work">作った物を見る</a>
+        <a class="button ghost" href={mail}>相談する</a>
+      </p>
+    </div>
+    <p class="hint small mono muted" aria-hidden="true">スクロールで街の中へ</p>
   </section>
 
-  <section class="section" id="services">
-    <div class="wrap">
-      <span class="num">01</span>
-      <h2>依頼できること</h2>
-      <p class="lead">
-        広く何でも、とは書きません。裏方で繰り返し頼まれてきた 4 つに絞っています。
-        当てはまらなくても、今の作業を見せてもらえれば「作る・作らない・買ったほうが早い」を返します。
-      </p>
-      <ul class="rows">
-        <li>
-          <h3>LINE・問い合わせの自動応対</h3>
-          <div>
-            <p>
-              AI には返信文を書かせません。問い合わせの種類を判定して、あなたが承認した定型文を選ぶだけ。
-              選べない物は何も返さず、Discord と管理画面へ回して人が見る。この境界があるので、複数アカウントでも混ざりません。
-            </p>
-            <p class="note">Lステップ・公式 LINE・自作の仕組み、どれが入っていても調べてから提案します。</p>
-          </div>
-        </li>
-        <li>
-          <h3>入金・契約・進捗の管理画面</h3>
-          <div>
-            <p>
-              スプレッドシートが限界になった時に。顧客ごとの入金、契約、制作の進みを 1 画面にまとめます。
-              あなたがすでに持っているサーバーに置くので、月額のサービスは増えません。
-            </p>
-          </div>
-        </li>
-        <li>
-          <h3>調査・分析・制作の自動化</h3>
-          <div>
-            <p>
-              競合アカウントの投稿を集めて型で分類する、教材や動画を文字起こしして検索できる形にする、
-              投稿や記事の下書きを作って法律の語や AI らしさを機械で検査する。X の長文記事の代筆も受けています。
-            </p>
-          </div>
-        </li>
-        <li>
-          <h3>誰も触れないシステムの引き取り</h3>
-          <div>
-            <p>
-              作った人が辞めた、資料がない、でも止められない。まず調査して「どこを触ると何が起きるか」を書き出し、
-              安全に直せる状態にしてから手を入れます。終わったら引き継ぎ資料を残すので、私に縛られません。
-            </p>
-          </div>
-        </li>
-      </ul>
-      <p class="note" style="margin-top:1rem;">
-        LP や Web サイトも作れます。構成の作例は <a href="#works">下</a> に置いています。
-      </p>
+  <!-- 作った物: スクロールで画面の前を順に通る -->
+  <section class="gallery" id="work" data-gallery style={`--n:${works.length}`} aria-labelledby="work-h">
+    <div class="gallery-stage">
+      <div class="gallery-head wrap">
+        <h2 id="work-h">作った物</h2>
+        <p class="small muted">本物の画面。スクロールで次へ。<span class="mono" data-work-count></span></p>
+      </div>
+      <ol class="wcards">
+        {works.map((w, i) => (
+          <li class:list={["wcard", { "is-on": i === 0 }]} data-work-card data-id={w.id} data-img={w.img}>
+            <img class="wcard-img" src={`${base}work/${w.img}`} alt={`${w.title}の画面`} width="1600" height="1000" loading="lazy" />
+            <div class="wcard-body">
+              <p class="mono small muted">{String(i + 1).padStart(2, "0")} / {String(works.length).padStart(2, "0")}{w.client ? " · 依頼主の製品" : ""}</p>
+              <h3>{w.title}</h3>
+              <p class="wcard-what">{w.what}</p>
+              <p class="small"><span class="muted">使った物</span> {w.tech}<br /><span class="muted">状態</span> {w.fact}</p>
+              {w.url && <a class="link small" href={w.url} rel="noopener" target="_blank">実物を開く</a>}
+            </div>
+          </li>
+        ))}
+      </ol>
     </div>
   </section>
 
-  <section class="section" id="cases">
+  <!-- 画面を出せない物 -->
+  <section class="more" id="more" aria-labelledby="more-h">
     <div class="wrap">
-      <span class="num">02</span>
-      <h2>事例</h2>
-      <p class="lead">
-        何を作ったかより、何を決めたか、いま動いているかを書いています。守秘のため名称と画面は伏せ、規模と担当範囲は正確に書いています。
-      </p>
-      <ul class="rows cases">
-        {cases.map((c) => (
-          <li>
-            <div class="when">
-              <span>{c.data.period}</span>
-              {c.data.own && <span class="own">自分の事業</span>}
+      <h2 id="more-h" class="head" data-lines>画面を出せない物も、動いています</h2>
+      <p class="lead" data-reveal>依頼主の守秘か、端末の中で動く物。何を作り、何を決め、どれだけの試験で守っているかを書きます。</p>
+      <ul class="rows">
+        {more.map((m, i) => (
+          <li class="row" data-reveal style={`--d:${i % 4}`}>
+            <div class="row-main">
+              <h3>{m.title}</h3>
+              <p>{m.what}</p>
             </div>
-            <div>
-              <h3><a href={`${base}cases/${c.id}/`}>{c.data.title}</a></h3>
-              <p>{c.data.oneLine}</p>
-              <p class="note">規模: {c.data.scale.join(" ／ ")}</p>
-              <p><a href={`${base}cases/${c.id}/`}>詳しく読む →</a></p>
+            <div class="row-side small">
+              <p><span class="muted">使った物</span><br />{m.tech}</p>
+              <p><span class="muted">規模</span><br /><span class="mono">{m.fact}</span></p>
+              {m.href && <a class="link" href={caseUrl(m.href)}>詳しく読む</a>}
             </div>
           </li>
         ))}
@@ -106,161 +94,159 @@ const mail = mailto();
     </div>
   </section>
 
-  <section class="section" id="process">
+  <!-- 全リポジトリ -->
+  <section class="repos" id="repos" aria-labelledby="repos-h">
     <div class="wrap">
-      <span class="num">03</span>
-      <h2>進め方</h2>
-      <p class="lead">依頼する側の手間を減らすために決めていることです。</p>
-      <ul class="rows">
-        <li>
-          <h3>依頼は 3 行でいい</h3>
-          <div>
-            <p>
-              「困っていること」「今のやり方」「いつまでに」。これだけ送ってもらえれば、仕様は私が文章に起こして返します。
-              確認は 1 往復で終わらせます。細かく聞き返して、あなたの時間を取ることはしません。
-            </p>
-          </div>
-        </li>
-        <li>
-          <h3>動いている物は止めない</h3>
-          <div>
-            <p>
-              変更は本番と分けた複製で作り、本番に出す前に「判定だけして送らない」影運用や試験で確かめます。
-              出したあとにすぐ戻せる手順も先に用意します。
-            </p>
-          </div>
-        </li>
-        <li>
-          <h3>AI の使い方を隠さない</h3>
-          <div>
-            <p>
-              下書き・試験・調査は AI にやらせています。判断と確認と責任は私です。
-              AI に任せた範囲は納品時に書きます。「AI に全部書かせたので分かりません」とは言いません。
-            </p>
-          </div>
-        </li>
-        <li>
-          <h3>私がいなくなっても困らない形で渡す</h3>
-          <div>
-            <p>
-              変更は全部履歴に残し、引き継ぎ資料を書きます。社内の技術担当や別の制作会社に渡しても読める状態にします。
-            </p>
-          </div>
-        </li>
-      </ul>
-    </div>
-  </section>
-
-  <section class="section" id="pricing">
-    <div class="wrap">
-      <span class="num">04</span>
-      <h2>料金と稼働の目安</h2>
-      <p class="lead">
-        「相談ください」だけでは予算を組めないと思うので、目安を置きます。実際の金額は現状を見てから出します。
-      </p>
-      <table>
-        <thead><tr><th>内容</th><th>目安</th><th>含む物・期間</th></tr></thead>
-        <tbody>
-          {pricing.map((p) => (
-            <tr>
-              <td data-k="内容"><strong>{p.item}</strong></td>
-              <td data-k="目安">{p.price}</td>
-              <td data-k="含む物・期間">{p.note}</td>
-            </tr>
+      <h2 id="repos-h" class="head" data-lines>{repos.length} のリポジトリ、{totalCommits.toLocaleString()} コミット</h2>
+      <p class="lead" data-reveal>{since.replace("-", " 年 ")} 月から 2026 年 10 月まで。公開 {publicRepos.length}、非公開 {privateCount}。街の高さはこの数字から作っています。</p>
+      <div class="repos-grid">
+        <ul class="langs" data-reveal>
+          {byLang.map(([lang, v]) => (
+            <li>
+              <span class="lang-name">{lang}</span>
+              <span class="bar" style={`--w:${Math.max(2, (v.c / maxLangC) * 100)}%`}></span>
+              <span class="mono small">{v.c.toLocaleString()} <span class="muted">/ {v.n}</span></span>
+            </li>
           ))}
-        </tbody>
-      </table>
-      <dl class="meta" style="margin-top:1.5rem;">
-        <div><dt>稼働</dt><dd>{site.availability.hours}</dd></div>
-        <div><dt>返信</dt><dd>{site.availability.reply}</dd></div>
-        <div><dt>着手</dt><dd>{site.availability.start}</dd></div>
-      </dl>
-    </div>
-  </section>
-
-  <section class="section" id="works">
-    <div class="wrap">
-      <span class="num">05</span>
-      <h2>Web サイト・LP の作例</h2>
-      <p class="lead">
-        業種を変えて、情報の並べ方と予約までの流れを作り分けた構成例です。店舗・人物・数値はすべて架空で、フォームは送信されません。
-      </p>
-      <ul class="works">
-        <li><a href={`${base}demo/cafe/`}><img src={`${base}demo/img/cafe.png`} alt="カフェのサイト作例" width="1440" height="900" loading="lazy" /><span>カフェ（写真中心・メニュー・店舗情報）</span></a></li>
-        <li><a href={`${base}demo/gym/`}><img src={`${base}demo/img/gym.png`} alt="パーソナルジムのサイト作例" width="1440" height="900" loading="lazy" /><span>パーソナルジム（悩み・料金・よくある質問・相談）</span></a></li>
-        <li><a href={`${base}demo/seitai/`}><img src={`${base}demo/img/seitai.png`} alt="整体院のサイト作例" width="1440" height="900" loading="lazy" /><span>整体院（安心感・施術・院内・アクセス）</span></a></li>
-      </ul>
-    </div>
-  </section>
-
-  <section class="section" id="about">
-    <div class="wrap about">
-      <span class="num">06</span>
-      <h2>自己紹介</h2>
-      <div class="about-in">
-        <p>
-          Ando と申します。フリーランスで開発をしています。
-          その前に自分で SNS を 2〜3 年運用して物を売っていたので、裏方の言葉は通じます。
-          「リスト」「教育」「ローンチ」と言われて、何のことか聞き返すことはありません。
-        </p>
-        <p>
-          きれいな新規開発より、長く使われて誰も全体を把握できなくなった仕組みを調べて直すほうが多いです。
-          いまは自分の事業として、AI が毎朝 SNS の投稿を書いて検査して投稿する回路を作っていて、
-          この経験がそのまま発信者の裏方の仕事に効いています。
-        </p>
-        <p class="note">
-          使う物: TypeScript / Python / Next.js / Astro / PostgreSQL / Redis / Docker / Coolify / GitHub Actions /
-          LINE Messaging API / Threads API / OpenAI API / Claude Code / Codex / Playwright / Vitest。
-          選ぶのは私ですが、理由は説明できます。
-        </p>
+        </ul>
+        <div class="pub" data-reveal style="--d:1">
+          <p class="small muted">公開しているリポジトリ</p>
+          <ul class="pub-list mono small">
+            {publicRepos.map((r) => (
+              <li><a class="link" href={`https://github.com/rikimaru63/${r.n}`} rel="noopener">{r.n}</a> <span class="muted">{r.c}</span></li>
+            ))}
+          </ul>
+        </div>
       </div>
     </div>
   </section>
 
-  <section class="section" id="contact">
+  <!-- 触れる物 -->
+  <section class="demo-sec" id="demo" aria-labelledby="demo-h">
+    <div class="wrap demo-grid">
+      <div>
+        <h2 id="demo-h" class="head" data-lines>触ってみてください</h2>
+        <p class="lead" data-reveal>私が作る LINE 自動応対は、AI に返信文を書かせません。種類を判定して承認済みの定型文を選ぶだけ。選べなければ何も返さず、人へ回します。返信の事故は 1 回で信用を失うので、自動化の範囲を狭くしても事故 0 のほうが得です。</p>
+      </div>
+      <div data-reveal style="--d:1"><LineDemo /></div>
+    </div>
+  </section>
+
+  <!-- 基盤 -->
+  <section class="stack" id="stack" aria-labelledby="stack-h">
     <div class="wrap">
-      <span class="num">07</span>
-      <h2>相談</h2>
-      <p class="lead">
-        「こういうことはできる？」の段階で送ってください。下の 3 つを分かる範囲で書いてもらえれば、次に確認することを私が整理して返します。
+      <h2 id="stack-h" class="head" data-lines>作って、動かして、渡す</h2>
+      <div class="stack-grid">
+        <div data-reveal>
+          <h3>作る</h3>
+          <p>TypeScript / Python / Next.js / Astro / Prisma / PostgreSQL / Redis / Docker。LINE Messaging API、Threads API、OpenAI と Claude の API。Three.js と GSAP（このサイト）。Godot。Raspberry Pi と ESP32。</p>
+        </div>
+        <div data-reveal style="--d:1">
+          <h3>動かす</h3>
+          <p>自社 VPS の Coolify で 15 プロジェクト、約 25 のアプリと 5 つの PostgreSQL を運用。GitHub の Deploy Key と App で自動配置。依頼主のサーバーに置く案件も同じ手順で。</p>
+        </div>
+        <div data-reveal style="--d:2">
+          <h3>渡す</h3>
+          <p>変更は全部履歴に残し、引き継ぎ資料を書く。本番に出す前に試験と影運用で確かめ、戻せる手順を先に用意する。AI には下書き・試験・調査をやらせ、判断と確認は私がする。</p>
+        </div>
+        <div data-reveal style="--d:3">
+          <h3>進め方</h3>
+          <p>チャットで 3 行（困っていること、今のやり方、いつまでに）もらえれば動けます。要望を「何ができれば完成か」の 1 枚に書き直して返し、確認は 1 往復で終わらせます。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 連絡 -->
+  <section class="contact" id="contact" aria-labelledby="contact-h">
+    <div class="wrap">
+      <h2 id="contact-h" class="head" data-lines>相談はメールで</h2>
+      <p class="lead" data-reveal>困っていること、今のやり方、希望時期の 3 つを書いて送ってください。次に確かめることを私が整理して返します。初回 60 分は無料、構築は 30 万円から、保守は月 3 万円から。</p>
+      <p class="cta" data-reveal style="--d:1">
+        <a class="button" href={mail}>メールで相談する</a>
+        <a class="button ghost" href="https://github.com/rikimaru63/portfolio" rel="noopener">このサイトのコードを見る</a>
       </p>
-      <ol>
-        <li>困っていること</li>
-        <li>今のやり方（スプレッドシート、Lステップ、手作業など）</li>
-        <li>希望時期（未定でも可）</li>
-      </ol>
-      <p class="cta">
-        <a class="btn primary" href={mail}>メールで相談する</a>
-        {site.x && <a class="btn" href={`https://x.com/${site.x}`} rel="noopener">X の DM</a>}
-      </p>
-      <p class="note">メール: {site.email}</p>
+      <p class="mono small muted">{site.email}</p>
     </div>
   </section>
 </Base>
 
+<script is:inline define:vars={{ base }}>
+  document.body.dataset.base = base;
+</script>
+
 <style>
-  .hero { padding: 3rem 16px 3.5rem; }
-  @media (min-width: 48em) { .hero { padding: 5rem 32px 5rem; } }
-  .role { font-size: 0.9rem; color: var(--muted); margin-bottom: 1rem; }
-  .hero h1 { max-width: 30em; margin-bottom: 1.2rem; }
-  .hero .lead { max-width: var(--measure); color: var(--ink-soft); }
-  .facts { list-style: none; padding: 0; margin: 2rem 0; display: grid; gap: 0.8rem; }
-  @media (min-width: 48em) { .facts { grid-template-columns: repeat(3, 1fr); gap: 1.5rem; } }
-  .facts li { border-top: 2px solid var(--ink); padding-top: 0.6rem; font-size: 0.92rem; line-height: 1.6; }
-  .facts strong { display: block; }
-  .facts span { color: var(--ink-soft); }
-  .cta { margin-top: 1.5rem; }
+  .world { position: fixed; inset: 0; width: 100vw; height: 100svh; z-index: 0; }
+  html.no-webgl .world { display: none; }
+  .tip { position: fixed; left: 0; top: 0; z-index: 30; pointer-events: none; padding: 0.5em 0.8em; background: rgba(11, 15, 26, 0.85); border: 1px solid var(--line); border-radius: 6px; display: grid; gap: 0.1em; backdrop-filter: blur(6px); }
+  .tip b { color: var(--accent); font-weight: 600; }
 
-  .cases .when { font-size: 0.85rem; color: var(--muted); display: flex; flex-direction: column; gap: 0.3rem; }
-  .own { display: inline-block; font-size: 0.75rem; border: 1px solid var(--line); padding: 0 0.5em; border-radius: 3px; width: max-content; }
-  .cases h3 a { text-decoration: none; }
-  .cases h3 a:hover { text-decoration: underline; }
+  /* ---------- hero ---------- */
+  .hero { position: relative; z-index: 1; min-height: 100svh; display: grid; align-items: center; padding-block: 96px 64px; }
+  .hero::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(90deg, rgba(11, 15, 26, 0.88) 0%, rgba(11, 15, 26, 0.55) 38%, rgba(11, 15, 26, 0) 68%); }
+  .hero-in { position: relative; }
+  @media (max-width: 47.99em) { .hero::before { background: linear-gradient(180deg, rgba(11, 15, 26, 0.2) 0%, rgba(11, 15, 26, 0.75) 45%, rgba(11, 15, 26, 0.85) 100%); } }
+  .hero-in { display: grid; gap: 1.6rem; max-width: 46rem; margin-inline: 0; padding-inline: var(--margin); }
+  .stats { display: grid; grid-template-columns: repeat(2, auto); gap: 1rem 2.5rem; width: max-content; }
+  @media (min-width: 48em) { .stats { grid-template-columns: repeat(4, auto); } }
+  .stats dt { font-size: 0.8rem; color: var(--fg-3); }
+  .stats dd { font-size: clamp(1.6rem, 3vw, 2.4rem); line-height: 1.1; font-weight: 600; }
+  .stats small { font-size: 0.5em; margin-left: 0.3em; color: var(--fg-2); font-family: var(--font-text); font-weight: 400; }
+  .cta { display: flex; gap: 0.8rem; flex-wrap: wrap; }
+  .hint { position: absolute; left: var(--margin); bottom: 24px; }
+  html.no-webgl .hero .lead::after { content: " （3D 表示に対応していない環境では、下の一覧で同じ物が見られます）"; }
 
-  .works { list-style: none; padding: 0; margin: 0; display: grid; gap: 1.5rem; }
-  @media (min-width: 48em) { .works { grid-template-columns: repeat(3, 1fr); } }
-  .works a { text-decoration: none; display: block; }
-  .works img { border: 1px solid var(--line); border-radius: 4px; margin-bottom: 0.5rem; }
-  .works span { font-size: 0.92rem; }
+  /* ---------- gallery ---------- */
+  .gallery { position: relative; z-index: 1; height: calc((var(--n) + 3) * 100svh); }
+  html.no-webgl .gallery { height: auto; }
+  .gallery-stage { position: sticky; top: 0; height: 100svh; display: grid; grid-template-rows: auto 1fr; pointer-events: none; }
+  html.no-webgl .gallery-stage { position: static; height: auto; pointer-events: auto; }
+  .gallery-head { padding-top: 80px; display: flex; align-items: baseline; gap: 1.5rem; flex-wrap: wrap; }
+  .gallery-head h2 { font-size: clamp(1.4rem, 2.5vw, 2rem); }
+  .wcards { position: relative; align-self: end; margin: 0 var(--margin) 32px; }
+  .wcard { position: absolute; left: 0; bottom: 0; width: min(100%, 30rem); opacity: 0; transform: translateY(16px); transition: opacity 500ms ease, transform 700ms var(--ease-expo); pointer-events: none; }
+  .wcard.is-on { opacity: 1; transform: none; pointer-events: auto; }
+  .wcard-body { padding: 1.2rem 1.4rem; background: rgba(11, 15, 26, 0.72); backdrop-filter: blur(10px); border: 1px solid var(--line); border-radius: 8px; display: grid; gap: 0.5rem; }
+  .wcard h3 { font-size: clamp(1.3rem, 2vw, 1.8rem); }
+  .wcard-what { color: var(--fg-2); font-size: 0.95rem; }
+  .wcard-img { display: none; }
+  html.no-webgl .wcards { position: static; margin: 2rem 0; display: grid; gap: 2rem; }
+  html.no-webgl .wcard { position: static; opacity: 1; transform: none; width: auto; pointer-events: auto; display: grid; gap: 1rem; }
+  html.no-webgl .wcard-img { display: block; border-radius: 8px; }
+  @media (max-width: 47.99em) {
+    .gallery-head { padding-top: 72px; }
+    .wcard { width: 100%; }
+    .wcard-body { padding: 1rem; }
+    .wcard-what { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  }
 
-  .about-in { max-width: var(--measure); }
+  /* ---------- sections on solid ground ---------- */
+  .more, .repos, .demo-sec, .stack, .contact { position: relative; z-index: 1; background: var(--bg); padding-block: clamp(5rem, 10vw, 9rem); }
+  .more { border-top: 1px solid var(--line); background: linear-gradient(to bottom, rgba(11, 15, 26, 0) 0, var(--bg) 160px); margin-top: -160px; padding-top: calc(160px + 5rem); }
+  .more .lead, .repos .lead, .contact .lead, .demo-sec .lead { margin-top: 1rem; }
+  .rows { margin-top: 3rem; display: grid; }
+  .row { display: grid; gap: 1rem; padding: 2rem 0; border-top: 1px solid var(--line); }
+  @media (min-width: 48em) { .row { grid-template-columns: 1fr 18rem; gap: 3rem; } }
+  .row h3 { font-size: clamp(1.25rem, 1.8vw, 1.6rem); margin-bottom: 0.5rem; }
+  .row-main p { color: var(--fg-2); }
+  .row-side { display: grid; gap: 0.6rem; align-content: start; }
+
+  .repos-grid { margin-top: 3rem; display: grid; gap: 3rem; }
+  @media (min-width: 48em) { .repos-grid { grid-template-columns: 1.2fr 1fr; } }
+  .langs { display: grid; gap: 0.7rem; }
+  .langs li { display: grid; grid-template-columns: 8rem 1fr auto; align-items: center; gap: 1rem; }
+  .bar { height: 10px; border-radius: 2px; background: var(--accent); width: var(--w); opacity: 0.85; transform-origin: left; }
+  .pub-list { columns: 2; column-gap: 2rem; display: block; }
+  .pub-list li { break-inside: avoid; padding: 0.15em 0; }
+
+  .demo-grid { display: grid; gap: 2.5rem; align-items: start; }
+  @media (min-width: 48em) { .demo-grid { grid-template-columns: 5fr 7fr; gap: 4rem; } }
+
+  .stack-grid { margin-top: 3rem; display: grid; gap: 2.5rem; }
+  @media (min-width: 48em) { .stack-grid { grid-template-columns: repeat(2, 1fr); gap: 3rem 4rem; } }
+  .stack-grid h3 { font-size: 1.3rem; margin-bottom: 0.6rem; color: var(--accent); }
+  .stack-grid p { color: var(--fg-2); }
+
+  .contact .cta { margin-top: 2rem; display: flex; gap: 0.8rem; flex-wrap: wrap; }
+  .contact .mono { margin-top: 1.5rem; }
 </style>

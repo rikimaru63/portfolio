@@ -1,16 +1,21 @@
 ---
-import { site } from "../data/site";
+const base = import.meta.env.BASE_URL.replace(/\/$/, "") + "/";
 const year = new Date().getFullYear();
 ---
 
-<footer class="ft">
-  <div class="wrap">
-    <p>© {year} {site.brand} / {site.company}</p>
-    <p class="note">掲載している事例は守秘義務に合わせて名称・画面・数値の一部を伏せています。作例ページの店舗・人物・数値はすべて架空です。</p>
-  </div>
+<footer class="ft wrap">
+  <p class="muted small">{year} Ando / Logence</p>
+  <nav aria-label="フッター" class="small">
+    <a class="link" href={`${base}#work`}>作った物</a>
+    <a class="link" href="https://github.com/rikimaru63/portfolio" rel="noopener">このサイトのコード</a>
+    <a class="link" href="https://github.com/rikimaru63" rel="noopener">GitHub</a>
+  </nav>
+  <p class="muted small right">依頼主の案件は名称と画面を本人確認のうえ掲載。数字は GitHub と各リポジトリの実測</p>
 </footer>
 
 <style>
-  .ft { border-top: 1px solid var(--line); padding: 2rem 0 3rem; font-size: 0.9rem; color: var(--muted); }
-  .ft p { margin-bottom: 0.4em; }
+  .ft { position: relative; z-index: 1; background: var(--bg); display: grid; grid-template-columns: 1fr auto 1fr; align-items: baseline; gap: 1.5rem; padding-block: 2rem 2.5rem; border-top: 1px solid var(--line); }
+  nav { display: flex; gap: 1.5rem; }
+  .right { text-align: right; }
+  @media (max-width: 47.99em) { .ft { grid-template-columns: 1fr; gap: 0.6rem; } .right { text-align: left; } }
 </style>

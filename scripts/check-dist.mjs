@@ -25,6 +25,8 @@ const demo = (f) => f.includes(`${path.sep}demo${path.sep}`);
 
 const banned = [
   "いかがでしたか",
+  "What can be built",
+  "Case studies",
   "伴走",
   "寄り添",
   "シームレス",
@@ -65,6 +67,7 @@ for (const file of htmls) {
   }
 }
 
+if (htmls.length === 0) errors.push("dist に HTML が無い（ビルド失敗？）");
 console.log(`HTML ${htmls.length} 枚、ファイル ${files.length} 個を検査`);
 if (errors.length) {
   for (const e of errors) console.error("NG " + e);

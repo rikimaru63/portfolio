@@ -18,23 +18,40 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, "");
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script is:inline>document.documentElement.classList.add("js");</script>
     <meta name="description" content={description} />
+    <meta name="theme-color" content="#0b0f1a" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonical} />
-    <meta name="twitter:card" content="summary" />
+    <meta property="og:image" content={`${Astro.site}portfolio/work/tukihi.jpg`} />
+    <meta name="twitter:card" content="summary_large_image" />
     <link rel="canonical" href={canonical} />
     <link rel="icon" href={`${base}/favicon.svg`} type="image/svg+xml" />
     <link rel="sitemap" href={`${base}/sitemap-index.xml`} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap"
+    />
     <title>{title}</title>
   </head>
   <body>
-    <a class="skip" href="#main">本文へ移動</a>
+    <a class="skip sr-only" href="#main">本文へ移動</a>
     <Header />
     <main id="main">
       <slot />
     </main>
     <Footer />
+    <script>
+      import { initMotion } from "../scripts/motion";
+      initMotion();
+    </script>
   </body>
 </html>
+
+<style is:global>
+  .skip:focus { position: fixed; left: var(--margin); top: 8px; width: auto; height: auto; clip-path: none; padding: 0.4em 0.8em; background: var(--fg); color: var(--bg); z-index: 50; }
+</style>

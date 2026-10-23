@@ -2,31 +2,25 @@
 import { site, mailto } from "../data/site";
 const base = import.meta.env.BASE_URL.replace(/\/$/, "") + "/";
 const nav = [
-  ["依頼できること", `${base}#services`],
-  ["事例", `${base}#cases`],
-  ["進め方", `${base}#process`],
-  ["料金", `${base}#pricing`],
-  ["自己紹介", `${base}#about`],
+  ["作った物", `${base}#work`],
+  ["全リポジトリ", `${base}#repos`],
+  ["触る", `${base}#demo`],
+  ["基盤", `${base}#stack`],
 ];
 ---
 
 <header class="hd">
-  <div class="wrap hd-in">
-    <a class="brand" href={base}>{site.brand}</a>
-    <nav aria-label="ページ内">
-      {nav.map(([label, href]) => <a href={href}>{label}</a>)}
-      <a class="mail" href={mailto()}>相談する</a>
-    </nav>
-  </div>
+  <a class="brand" href={base}>{site.brand}</a>
+  <nav aria-label="ページ内">
+    {nav.map(([label, href]) => <a class="link" href={href}>{label}</a>)}
+  </nav>
+  <a class="act" href={mailto()}>相談する</a>
 </header>
 
 <style>
-  .hd { border-bottom: 1px solid var(--line); background: var(--bg); }
-  .hd-in { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-top: 0.9rem; padding-bottom: 0.9rem; flex-wrap: wrap; }
-  .brand { font-weight: 700; text-decoration: none; font-size: 1.15rem; letter-spacing: 0.02em; }
-  nav { display: flex; gap: 1rem; flex-wrap: wrap; font-size: 0.9rem; }
-  nav a { text-decoration: none; }
-  nav a:hover { text-decoration: underline; }
-  .mail { font-weight: 700; color: var(--accent); }
-  @media (max-width: 47.99em) { nav a:not(.mail) { display: none; } }
+  .hd { position: fixed; inset: 0 0 auto 0; z-index: 20; display: flex; align-items: center; justify-content: space-between; gap: 1rem; height: 64px; padding-inline: var(--margin); mix-blend-mode: normal; }
+  .brand { font-family: var(--font-display); font-weight: 800; font-size: 1.25rem; letter-spacing: -0.03em; }
+  nav { display: flex; gap: 1.6rem; font-size: 0.9rem; color: var(--fg-2); }
+  .act { font-size: 0.9rem; font-weight: 700; color: var(--accent); }
+  @media (max-width: 47.99em) { nav { display: none; } }
 </style>

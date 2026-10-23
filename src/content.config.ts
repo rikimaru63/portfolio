@@ -7,6 +7,8 @@ const cases = defineCollection({
   loader: glob({ pattern: "**/*.md", base: "./src/content/cases" }),
   schema: z.object({
     title: z.string(),
+    short: z.string(),
+    frags: z.array(z.string()).default([]),
     order: z.number(),
     period: z.string(),
     client: z.string(),

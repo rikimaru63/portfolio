@@ -1,0 +1,55 @@
+---
+// 触れる物: LINE 自動応対の振り分け実演。script が無くても定型文の一覧は読める。
+export const rules = [
+  { id: "booking", name: "予約・日程", words: ["予約", "日程", "空き", "空いて", "いつ", "何日", "何時から", "都合", "変更"], reply: "予約のご希望ありがとうございます。ご希望の日時を 2 つほど教えてください。空き状況を確認してご連絡します。" },
+  { id: "price", name: "料金", words: ["料金", "いくら", "値段", "価格", "費用", "お金", "高い", "カード", "支払"], reply: "料金は最新の一覧をプロフィールのリンクに置いています。どのプランか迷っていたら、目的を一言教えてください。" },
+  { id: "place", name: "場所・営業時間", words: ["場所", "住所", "どこ", "駅", "営業", "何時まで", "時間", "駐車"], reply: "場所と営業時間はこちらです。駅からの道順も載せています。" },
+  { id: "thanks", name: "お礼・雑談", words: ["ありがとう", "助かり", "了解", "ありがと", "嬉しい"], reply: "こちらこそありがとうございます。また何かあればいつでもどうぞ。" },
+  { id: "human", name: "解約・返金・苦情", words: ["解約", "返金", "キャンセル", "困", "怒", "遅い", "違う", "おかしい", "やめ"], reply: null },
+];
+---
+
+<div class="demo" data-router>
+  <div class="demo-top">
+    <p class="small muted">LINE 自動応対の実演。ブラウザの中の簡単なルールで判定しています。本番は AI が分類しますが、「迷ったら人へ」は同じです。</p>
+  </div>
+  <label class="small muted" for="router-input">届いた問い合わせ</label>
+  <textarea id="router-input" rows="2" placeholder="例）来週の土曜って空いてますか？" data-router-input></textarea>
+  <div class="samples">
+    {["来週の土曜って空いてますか？", "料金っていくらですか", "返金してほしいんですけど", "駅から徒歩で何分ですか", "（スタンプ）"].map((s) => (
+      <button type="button" class="chip" data-router-sample={s}>{s}</button>
+    ))}
+  </div>
+  <button type="button" class="button" data-router-run>判定する</button>
+  <div class="result" data-router-result aria-live="polite">
+    <p class="small muted">判定</p>
+    <p class="verdict">ここに結果が出ます</p>
+    <p class="reply"></p>
+  </div>
+  <details class="list small">
+    <summary>承認済みの定型文（{rules.length} 種類）</summary>
+    <ul>
+      {rules.map((r) => (
+        <li><b>{r.name}</b>{r.reply ? `：${r.reply}` : "：定型文なし。何も返さず、人へ回す"}</li>
+      ))}
+    </ul>
+  </details>
+  <script type="application/json" data-router-rules set:html={JSON.stringify(rules)} />
+</div>
+
+<style>
+  .demo { display: grid; gap: 0.9rem; padding: 1.5rem; background: var(--bg-2); border-radius: 8px; box-shadow: inset 0 0 0 1px var(--line); }
+  textarea { width: 100%; resize: vertical; padding: 0.8em 0.9em; background: var(--bg); color: var(--fg); border: 1px solid var(--line); border-radius: 6px; line-height: 1.6; min-height: 3.8em; }
+  .samples { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .chip { padding: 0.45em 0.9em; border-radius: 999px; background: rgba(238, 240, 244, 0.06); font-size: 0.9rem; transition: background-color 180ms ease; }
+  @media (hover: hover) { .chip:hover { background: rgba(238, 240, 244, 0.14); } }
+  .result { padding: 1rem 1.1rem; border-radius: 6px; background: var(--bg); min-height: 6em; transition: background-color 300ms ease; }
+  .result.ok { background: rgba(94, 224, 194, 0.14); }
+  .result.human { background: rgba(255, 138, 92, 0.16); }
+  .verdict { font-weight: 700; }
+  .reply { margin-top: 0.4em; color: var(--fg-2); }
+  .reply:empty { display: none; }
+  .list summary { cursor: pointer; color: var(--fg-3); }
+  .list ul { padding: 0.6em 0 0 1.2em; margin: 0; color: var(--fg-2); }
+  .list li + li { margin-top: 0.3em; }
+</style>
