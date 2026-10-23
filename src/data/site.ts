@@ -3,9 +3,9 @@ export const site = {
   name: "Ando",
   brand: "Ando.",
   company: "Logence",
-  title: "Ando. | SNS・コンテンツ販売事業の裏方をコードにする開発担当",
+  title: "Ando. | Web、EC、AI 自動化、ハードウェア、ゲームを作るフリーランス開発者",
   description:
-    "LINEの自動応対、入金や契約の管理画面、競合調査や教材の検索基盤。発信者と事務局のうしろで、人がやらなくていい仕事を仕組みにするフリーランス開発者 Ando のポートフォリオ。",
+    "GitHub の 67 リポジトリ、6,293 コミットを 3D の街として歩けるポートフォリオ。LINE 自動応対、EC、入金管理、SNS 自動化、Raspberry Pi、Godot のゲームまで。フリーランス開発者 Ando。",
   email: "logence63@gmail.com",
   // 本人確認待ち: 公開してよい X アカウントなら handle を入れる。空なら表示しない。
   x: "",
