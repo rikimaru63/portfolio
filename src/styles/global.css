@@ -1,0 +1,130 @@
+:root {
+  --bg: #faf9f6;
+  --bg-soft: #f1efe9;
+  --ink: #1c1c1a;
+  --ink-soft: #4a4a46;
+  --muted: #7a7872;
+  --line: #d9d6cd;
+  --accent: #1f4e79;
+  --accent-ink: #ffffff;
+  --mark: #fff3b0;
+  --max: 72rem;
+  --measure: 40em;
+  --font: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic", "Meiryo", system-ui, sans-serif;
+  --mono: "SFMono-Regular", Menlo, Consolas, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #161614;
+    --bg-soft: #1f1f1c;
+    --ink: #ecebe6;
+    --ink-soft: #c9c7bf;
+    --muted: #8f8d85;
+    --line: #35352f;
+    --accent: #8fb4dc;
+    --accent-ink: #10131a;
+    --mark: #4a4320;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #161614;
+  --bg-soft: #1f1f1c;
+  --ink: #ecebe6;
+  --ink-soft: #c9c7bf;
+  --muted: #8f8d85;
+  --line: #35352f;
+  --accent: #8fb4dc;
+  --accent-ink: #10131a;
+  --mark: #4a4320;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: 16px;
+  line-height: 1.9;
+  font-feature-settings: "palt";
+  letter-spacing: 0.01em;
+}
+@media (min-width: 48em) { body { font-size: 17px; } }
+
+a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 0.2em; }
+a:hover { color: var(--accent); }
+img { max-width: 100%; height: auto; display: block; }
+h1, h2, h3 { line-height: 1.45; letter-spacing: 0.01em; margin: 0; font-weight: 700; }
+h1 { font-size: clamp(1.6rem, 3.6vw, 2.5rem); }
+h2 { font-size: clamp(1.35rem, 2.6vw, 1.85rem); }
+h3 { font-size: 1.1rem; }
+p { margin: 0 0 1em; }
+ul, ol { padding-left: 1.3em; margin: 0 0 1em; }
+li + li { margin-top: 0.3em; }
+strong { font-weight: 700; }
+mark { background: var(--mark); color: inherit; padding: 0 0.15em; }
+small { color: var(--muted); }
+
+.wrap { max-width: var(--max); margin: 0 auto; padding: 0 16px; }
+@media (min-width: 48em) { .wrap { padding: 0 32px; } }
+
+.skip {
+  position: absolute; left: -999px; top: 8px; background: var(--ink); color: var(--bg); padding: 0.4em 0.8em;
+}
+.skip:focus { left: 8px; z-index: 10; }
+
+.section { padding: 3.5rem 0; border-top: 1px solid var(--line); }
+@media (min-width: 48em) { .section { padding: 5rem 0; } }
+.section > .wrap > h2 { margin-bottom: 1.5rem; }
+.section .lead { max-width: var(--measure); color: var(--ink-soft); margin-bottom: 2rem; }
+
+/* 見出しの横に小さな番号。英語の飾り見出しは使わない */
+.num { font-family: var(--mono); font-size: 0.8rem; color: var(--muted); display: block; margin-bottom: 0.4rem; letter-spacing: 0.05em; }
+
+.btn {
+  display: inline-block; padding: 0.7em 1.3em; border: 1px solid var(--ink); border-radius: 4px;
+  text-decoration: none; font-weight: 700; line-height: 1.4;
+}
+.btn:hover { background: var(--ink); color: var(--bg); }
+.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.btn.primary:hover { filter: brightness(1.1); }
+.btn + .btn { margin-left: 0.6rem; }
+
+/* 罫線だけで区切る一覧。カードの格子は使わない */
+.rows { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--line); }
+.rows > li { padding: 1.4rem 0; border-bottom: 1px solid var(--line); }
+@media (min-width: 48em) {
+  .rows > li { display: grid; grid-template-columns: 14rem 1fr; gap: 2rem; }
+}
+.rows h3 { margin-bottom: 0.4rem; }
+.rows p:last-child { margin-bottom: 0; }
+
+/* 流れを示す横並びの箱 */
+.flow { list-style: none; padding: 0; margin: 1.2rem 0 1.6rem; display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: stretch; }
+.flow > li {
+  border: 1px solid var(--ink); border-radius: 4px; padding: 0.45em 0.8em; font-size: 0.92rem; line-height: 1.5;
+  position: relative; background: var(--bg);
+}
+.flow > li.alt { border-style: dashed; color: var(--ink-soft); }
+.flow > li + li::before { content: "→"; position: absolute; left: -0.95rem; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 0.8rem; }
+.flow > li + li { margin-left: 0.8rem; }
+
+.meta { display: grid; gap: 0.6rem 1.2rem; grid-template-columns: 1fr; font-size: 0.92rem; margin: 1.5rem 0; padding: 1rem 1.2rem; background: var(--bg-soft); border-radius: 6px; }
+@media (min-width: 48em) { .meta { grid-template-columns: repeat(3, 1fr); } }
+.meta dt { color: var(--muted); font-size: 0.8rem; }
+.meta dd { margin: 0; }
+
+table { border-collapse: collapse; width: 100%; font-size: 0.95rem; }
+th, td { text-align: left; vertical-align: top; padding: 0.8em 0.6em; border-bottom: 1px solid var(--line); }
+th { font-weight: 700; white-space: nowrap; }
+@media (max-width: 47.99em) {
+  table, tbody, tr, td, th { display: block; }
+  thead { display: none; }
+  tr { padding: 0.8rem 0; border-bottom: 1px solid var(--line); }
+  td, th { border: 0; padding: 0.15em 0; }
+  td[data-k]::before { content: attr(data-k); display: block; color: var(--muted); font-size: 0.8rem; }
+}
+
+.note { font-size: 0.9rem; color: var(--muted); }

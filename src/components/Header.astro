@@ -1,0 +1,32 @@
+---
+import { site, mailto } from "../data/site";
+const base = import.meta.env.BASE_URL.replace(/\/$/, "") + "/";
+const nav = [
+  ["依頼できること", `${base}#services`],
+  ["事例", `${base}#cases`],
+  ["進め方", `${base}#process`],
+  ["料金", `${base}#pricing`],
+  ["自己紹介", `${base}#about`],
+];
+---
+
+<header class="hd">
+  <div class="wrap hd-in">
+    <a class="brand" href={base}>{site.brand}</a>
+    <nav aria-label="ページ内">
+      {nav.map(([label, href]) => <a href={href}>{label}</a>)}
+      <a class="mail" href={mailto()}>相談する</a>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .hd { border-bottom: 1px solid var(--line); background: var(--bg); }
+  .hd-in { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-top: 0.9rem; padding-bottom: 0.9rem; flex-wrap: wrap; }
+  .brand { font-weight: 700; text-decoration: none; font-size: 1.15rem; letter-spacing: 0.02em; }
+  nav { display: flex; gap: 1rem; flex-wrap: wrap; font-size: 0.9rem; }
+  nav a { text-decoration: none; }
+  nav a:hover { text-decoration: underline; }
+  .mail { font-weight: 700; color: var(--accent); }
+  @media (max-width: 47.99em) { nav a:not(.mail) { display: none; } }
+</style>

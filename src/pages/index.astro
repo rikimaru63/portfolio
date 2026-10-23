@@ -1,0 +1,266 @@
+---
+import { getCollection } from "astro:content";
+import Base from "../layouts/Base.astro";
+import { site, mailto, pricing } from "../data/site";
+
+const cases = (await getCollection("cases")).sort((a, b) => a.data.order - b.data.order);
+const base = import.meta.env.BASE_URL.replace(/\/$/, "") + "/";
+const mail = mailto();
+---
+
+<Base>
+  <section class="hero wrap">
+    <p class="role">Ando ／ フリーランスの開発者 ／ SNS で売る事業の裏方</p>
+    <h1>LINE の返信、入金の確認、競合の調査。<br />人がやらなくていい裏方の仕事を、コードにします。</h1>
+    <p class="lead">
+      発信者ご本人でも、事務局やディレクターの方でも、Slack か LINE で 3 行もらえれば動けます。仕様書はいりません。
+      動いている仕組みを止めずに直すのが得意で、AI に書かせた物は私が試験してから渡します。
+    </p>
+    <ul class="facts">
+      <li><strong>LINE の自動応対</strong><span>自動テスト 3,104 件、複数アカウントで本番運用中</span></li>
+      <li><strong>入金・契約の管理画面</strong><span>お客様のサーバーに置き、11 アカウント分を本番反映</span></li>
+      <li><strong>SNS 教材 2,848 本</strong><span>AI が媒体 × ジャンルで引ける知識ベースに</span></li>
+    </ul>
+    <p class="cta">
+      <a class="btn primary" href={mail}>メールで相談する</a>
+      <a class="btn" href="#cases">事例を読む</a>
+    </p>
+  </section>
+
+  <section class="section" id="services">
+    <div class="wrap">
+      <span class="num">01</span>
+      <h2>依頼できること</h2>
+      <p class="lead">
+        広く何でも、とは書きません。裏方で繰り返し頼まれてきた 4 つに絞っています。
+        当てはまらなくても、今の作業を見せてもらえれば「作る・作らない・買ったほうが早い」を返します。
+      </p>
+      <ul class="rows">
+        <li>
+          <h3>LINE・問い合わせの自動応対</h3>
+          <div>
+            <p>
+              AI には返信文を書かせません。問い合わせの種類を判定して、あなたが承認した定型文を選ぶだけ。
+              選べない物は何も返さず、Discord と管理画面へ回して人が見る。この境界があるので、複数アカウントでも混ざりません。
+            </p>
+            <p class="note">Lステップ・公式 LINE・自作の仕組み、どれが入っていても調べてから提案します。</p>
+          </div>
+        </li>
+        <li>
+          <h3>入金・契約・進捗の管理画面</h3>
+          <div>
+            <p>
+              スプレッドシートが限界になった時に。顧客ごとの入金、契約、制作の進みを 1 画面にまとめます。
+              あなたがすでに持っているサーバーに置くので、月額のサービスは増えません。
+            </p>
+          </div>
+        </li>
+        <li>
+          <h3>調査・分析・制作の自動化</h3>
+          <div>
+            <p>
+              競合アカウントの投稿を集めて型で分類する、教材や動画を文字起こしして検索できる形にする、
+              投稿や記事の下書きを作って法律の語や AI らしさを機械で検査する。X の長文記事の代筆も受けています。
+            </p>
+          </div>
+        </li>
+        <li>
+          <h3>誰も触れないシステムの引き取り</h3>
+          <div>
+            <p>
+              作った人が辞めた、資料がない、でも止められない。まず調査して「どこを触ると何が起きるか」を書き出し、
+              安全に直せる状態にしてから手を入れます。終わったら引き継ぎ資料を残すので、私に縛られません。
+            </p>
+          </div>
+        </li>
+      </ul>
+      <p class="note" style="margin-top:1rem;">
+        LP や Web サイトも作れます。構成の作例は <a href="#works">下</a> に置いています。
+      </p>
+    </div>
+  </section>
+
+  <section class="section" id="cases">
+    <div class="wrap">
+      <span class="num">02</span>
+      <h2>事例</h2>
+      <p class="lead">
+        何を作ったかより、何を決めたか、いま動いているかを書いています。守秘のため名称と画面は伏せ、規模と担当範囲は正確に書いています。
+      </p>
+      <ul class="rows cases">
+        {cases.map((c) => (
+          <li>
+            <div class="when">
+              <span>{c.data.period}</span>
+              {c.data.own && <span class="own">自分の事業</span>}
+            </div>
+            <div>
+              <h3><a href={`${base}cases/${c.id}/`}>{c.data.title}</a></h3>
+              <p>{c.data.oneLine}</p>
+              <p class="note">規模: {c.data.scale.join(" ／ ")}</p>
+              <p><a href={`${base}cases/${c.id}/`}>詳しく読む →</a></p>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section" id="process">
+    <div class="wrap">
+      <span class="num">03</span>
+      <h2>進め方</h2>
+      <p class="lead">依頼する側の手間を減らすために決めていることです。</p>
+      <ul class="rows">
+        <li>
+          <h3>依頼は 3 行でいい</h3>
+          <div>
+            <p>
+              「困っていること」「今のやり方」「いつまでに」。これだけ送ってもらえれば、仕様は私が文章に起こして返します。
+              確認は 1 往復で終わらせます。細かく聞き返して、あなたの時間を取ることはしません。
+            </p>
+          </div>
+        </li>
+        <li>
+          <h3>動いている物は止めない</h3>
+          <div>
+            <p>
+              変更は本番と分けた複製で作り、本番に出す前に「判定だけして送らない」影運用や試験で確かめます。
+              出したあとにすぐ戻せる手順も先に用意します。
+            </p>
+          </div>
+        </li>
+        <li>
+          <h3>AI の使い方を隠さない</h3>
+          <div>
+            <p>
+              下書き・試験・調査は AI にやらせています。判断と確認と責任は私です。
+              AI に任せた範囲は納品時に書きます。「AI に全部書かせたので分かりません」とは言いません。
+            </p>
+          </div>
+        </li>
+        <li>
+          <h3>私がいなくなっても困らない形で渡す</h3>
+          <div>
+            <p>
+              変更は全部履歴に残し、引き継ぎ資料を書きます。社内の技術担当や別の制作会社に渡しても読める状態にします。
+            </p>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section" id="pricing">
+    <div class="wrap">
+      <span class="num">04</span>
+      <h2>料金と稼働の目安</h2>
+      <p class="lead">
+        「相談ください」だけでは予算を組めないと思うので、目安を置きます。実際の金額は現状を見てから出します。
+      </p>
+      <table>
+        <thead><tr><th>内容</th><th>目安</th><th>含む物・期間</th></tr></thead>
+        <tbody>
+          {pricing.map((p) => (
+            <tr>
+              <td data-k="内容"><strong>{p.item}</strong></td>
+              <td data-k="目安">{p.price}</td>
+              <td data-k="含む物・期間">{p.note}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <dl class="meta" style="margin-top:1.5rem;">
+        <div><dt>稼働</dt><dd>{site.availability.hours}</dd></div>
+        <div><dt>返信</dt><dd>{site.availability.reply}</dd></div>
+        <div><dt>着手</dt><dd>{site.availability.start}</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="section" id="works">
+    <div class="wrap">
+      <span class="num">05</span>
+      <h2>Web サイト・LP の作例</h2>
+      <p class="lead">
+        業種を変えて、情報の並べ方と予約までの流れを作り分けた構成例です。店舗・人物・数値はすべて架空で、フォームは送信されません。
+      </p>
+      <ul class="works">
+        <li><a href={`${base}demo/cafe/`}><img src={`${base}demo/img/cafe.png`} alt="カフェのサイト作例" width="1440" height="900" loading="lazy" /><span>カフェ（写真中心・メニュー・店舗情報）</span></a></li>
+        <li><a href={`${base}demo/gym/`}><img src={`${base}demo/img/gym.png`} alt="パーソナルジムのサイト作例" width="1440" height="900" loading="lazy" /><span>パーソナルジム（悩み・料金・よくある質問・相談）</span></a></li>
+        <li><a href={`${base}demo/seitai/`}><img src={`${base}demo/img/seitai.png`} alt="整体院のサイト作例" width="1440" height="900" loading="lazy" /><span>整体院（安心感・施術・院内・アクセス）</span></a></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section" id="about">
+    <div class="wrap about">
+      <span class="num">06</span>
+      <h2>自己紹介</h2>
+      <div class="about-in">
+        <p>
+          Ando と申します。フリーランスで開発をしています。
+          その前に自分で SNS を 2〜3 年運用して物を売っていたので、裏方の言葉は通じます。
+          「リスト」「教育」「ローンチ」と言われて、何のことか聞き返すことはありません。
+        </p>
+        <p>
+          きれいな新規開発より、長く使われて誰も全体を把握できなくなった仕組みを調べて直すほうが多いです。
+          いまは自分の事業として、AI が毎朝 SNS の投稿を書いて検査して投稿する回路を作っていて、
+          この経験がそのまま発信者の裏方の仕事に効いています。
+        </p>
+        <p class="note">
+          使う物: TypeScript / Python / Next.js / Astro / PostgreSQL / Redis / Docker / Coolify / GitHub Actions /
+          LINE Messaging API / Threads API / OpenAI API / Claude Code / Codex / Playwright / Vitest。
+          選ぶのは私ですが、理由は説明できます。
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="contact">
+    <div class="wrap">
+      <span class="num">07</span>
+      <h2>相談</h2>
+      <p class="lead">
+        「こういうことはできる？」の段階で送ってください。下の 3 つを分かる範囲で書いてもらえれば、次に確認することを私が整理して返します。
+      </p>
+      <ol>
+        <li>困っていること</li>
+        <li>今のやり方（スプレッドシート、Lステップ、手作業など）</li>
+        <li>希望時期（未定でも可）</li>
+      </ol>
+      <p class="cta">
+        <a class="btn primary" href={mail}>メールで相談する</a>
+        {site.x && <a class="btn" href={`https://x.com/${site.x}`} rel="noopener">X の DM</a>}
+      </p>
+      <p class="note">メール: {site.email}</p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hero { padding: 3rem 16px 3.5rem; }
+  @media (min-width: 48em) { .hero { padding: 5rem 32px 5rem; } }
+  .role { font-size: 0.9rem; color: var(--muted); margin-bottom: 1rem; }
+  .hero h1 { max-width: 30em; margin-bottom: 1.2rem; }
+  .hero .lead { max-width: var(--measure); color: var(--ink-soft); }
+  .facts { list-style: none; padding: 0; margin: 2rem 0; display: grid; gap: 0.8rem; }
+  @media (min-width: 48em) { .facts { grid-template-columns: repeat(3, 1fr); gap: 1.5rem; } }
+  .facts li { border-top: 2px solid var(--ink); padding-top: 0.6rem; font-size: 0.92rem; line-height: 1.6; }
+  .facts strong { display: block; }
+  .facts span { color: var(--ink-soft); }
+  .cta { margin-top: 1.5rem; }
+
+  .cases .when { font-size: 0.85rem; color: var(--muted); display: flex; flex-direction: column; gap: 0.3rem; }
+  .own { display: inline-block; font-size: 0.75rem; border: 1px solid var(--line); padding: 0 0.5em; border-radius: 3px; width: max-content; }
+  .cases h3 a { text-decoration: none; }
+  .cases h3 a:hover { text-decoration: underline; }
+
+  .works { list-style: none; padding: 0; margin: 0; display: grid; gap: 1.5rem; }
+  @media (min-width: 48em) { .works { grid-template-columns: repeat(3, 1fr); } }
+  .works a { text-decoration: none; display: block; }
+  .works img { border: 1px solid var(--line); border-radius: 4px; margin-bottom: 0.5rem; }
+  .works span { font-size: 0.92rem; }
+
+  .about-in { max-width: var(--measure); }
+</style>

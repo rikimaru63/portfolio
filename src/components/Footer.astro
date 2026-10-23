@@ -1,0 +1,16 @@
+---
+import { site } from "../data/site";
+const year = new Date().getFullYear();
+---
+
+<footer class="ft">
+  <div class="wrap">
+    <p>© {year} {site.brand} / {site.company}</p>
+    <p class="note">掲載している事例は守秘義務に合わせて名称・画面・数値の一部を伏せています。作例ページの店舗・人物・数値はすべて架空です。</p>
+  </div>
+</footer>
+
+<style>
+  .ft { border-top: 1px solid var(--line); padding: 2rem 0 3rem; font-size: 0.9rem; color: var(--muted); }
+  .ft p { margin-bottom: 0.4em; }
+</style>

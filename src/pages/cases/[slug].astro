@@ -1,0 +1,51 @@
+---
+import { getCollection, render } from "astro:content";
+import Base from "../../layouts/Base.astro";
+import { mailto } from "../../data/site";
+
+export async function getStaticPaths() {
+  const cases = await getCollection("cases");
+  return cases.map((c) => ({ params: { slug: c.id }, props: { entry: c } }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const d = entry.data;
+const base = import.meta.env.BASE_URL.replace(/\/$/, "") + "/";
+---
+
+<Base title={`${d.title} | Ando.`} description={d.oneLine}>
+  <article class="wrap case">
+    <p class="crumbs"><a href={`${base}#cases`}>事例一覧</a> / {d.own ? "自分の事業" : "依頼を受けた案件"}</p>
+    <h1>{d.title}</h1>
+    <p class="one">{d.oneLine}</p>
+
+    <dl class="meta">
+      <div><dt>時期</dt><dd>{d.period}</dd></div>
+      <div><dt>依頼主</dt><dd>{d.client}</dd></div>
+      <div><dt>担当した範囲</dt><dd>{d.scope.join(" / ")}</dd></div>
+      <div><dt>規模</dt><dd>{d.scale.join(" / ")}</dd></div>
+      <div><dt>使った物</dt><dd>{d.stack.join(" / ")}</dd></div>
+    </dl>
+
+    <div class="body">
+      <Content />
+    </div>
+
+    <p class="back">
+      <a class="btn" href={`${base}#cases`}>ほかの事例を見る</a>
+      <a class="btn primary" href={mailto()}>似た状況を相談する</a>
+    </p>
+  </article>
+</Base>
+
+<style>
+  .case { padding: 2.5rem 16px 4rem; max-width: 50rem; }
+  @media (min-width: 48em) { .case { padding: 3.5rem 32px 5rem; } }
+  .crumbs { font-size: 0.85rem; color: var(--muted); }
+  h1 { margin-bottom: 1rem; }
+  .one { color: var(--ink-soft); max-width: var(--measure); }
+  .body :global(h2) { font-size: 1.2rem; margin: 2.2rem 0 0.8rem; padding-left: 0.7rem; border-left: 3px solid var(--accent); }
+  .body :global(p), .body :global(ul) { max-width: var(--measure); }
+  .back { margin-top: 3rem; }
+</style>
