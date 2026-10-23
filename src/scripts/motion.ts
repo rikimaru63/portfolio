@@ -96,9 +96,18 @@ async function world() {
   }
 }
 
+function header() {
+  const hd = document.querySelector<HTMLElement>("[data-header]");
+  if (!hd) return;
+  const set = () => hd.classList.toggle("is-scrolled", scrollY > 40);
+  addEventListener("scroll", set, { passive: true });
+  set();
+}
+
 export function initMotion() {
   gsap.registerPlugin(ScrollTrigger, SplitText);
   smooth();
+  header();
   lines();
   reveals();
   counters();
