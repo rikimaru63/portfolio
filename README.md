@@ -11,11 +11,10 @@ Astro で作った静的サイト。`main` に push すると GitHub Actions が
 | `src/pages/index.astro` | トップ。3D の街（最初の画面）、本物の画面を 3D で順に通る「作った物」、画面を出せない物、全リポジトリ、LINE 振り分けの実演、基盤、連絡 |
 | `src/scripts/world.ts` | Three.js r186 の 3D。67 リポジトリの実データを街に（高さ＝コミット、色＝言語、公開は屋根が明るい）、スクロールで通路を進み、本物の画面を貼った 3D スクリーンの前で止まる。bloom、霧、格子の床のシェーダー。スマホは軽い設定 |
 | `src/scripts/motion.ts` | 動きの層の起動。GSAP ScrollTrigger / SplitText、Lenis、数字のカウント、3D の起動と WebGL が無い時の退避 |
-| `src/data/repos.json` | GitHub の全リポジトリ（名前は公開分のみ、言語・コミット数・作成月）。`docs/実績台帳_2026-10-23.md` の調査で取得 |
+| `src/data/repos.json` | GitHub の全リポジトリ（名前は公開分のみ、言語・コミット数・作成月）。実績台帳（依頼主名を含むので非公開の wiki リポジトリに置く）の調査で取得 |
 | `src/data/works.ts` | 作った物。本物の画面がある物（`public/work/*.jpg`）と、画面を出せない物 |
 | `src/components/LineDemo.astro` と `src/scripts/router.ts` | 触れる物。打った文の種類を判定して、承認済みの定型文を選ぶか人へ回す |
 | `src/content/cases/*.md` | 事例の詳細。1 件 1 ファイル |
-| `docs/実績台帳_2026-10-23.md` | 実績の全数調査（GitHub 67 件、Coolify 15 プロジェクト、公開 URL の生死） |
 | `public/demo/` | 架空の業種で作った Web サイトの作例 3 本 |
 | `scripts/check-dist.mjs` | ビルド結果の検査（リンク切れ・meta・架空表示・使わない言い回し） |
 | `.claude/skills/` | デザイン（taste-skill、impeccable）、文章（humanizer、humanizer-japanese）、Three.js と GSAP の公式スキル |
@@ -52,7 +51,7 @@ GH_TOKEN=$(gh auth token --user rikimaru63) gh api -X PUT repos/rikimaru63/portf
 
 ## 公開前に本人が確認する所
 
-- 依頼主の製品の画面を載せてよいか（`src/data/works.ts` の `client: true`: 採用サイト、HERCULiS、DirecTo、スクール HP）
+- 依頼主の製品の画面を載せてよいか（`src/data/works.ts` の `client: true`。名称とロゴはぼかし、リンクは付けていない）
 - `src/data/site.ts` の料金の目安・稼働条件（提案値のまま）
 - 顔写真か名前を出すか
-- `docs/実績台帳_2026-10-23.md` の「本人に確認する物」
+- 実績台帳（非公開の wiki リポジトリ `plans/`）の「本人に確認する物」

@@ -13,9 +13,9 @@ export type Work = {
 
 export const works: Work[] = [
   { id: "tukihi", title: "個人向け SIM 申込サイト", what: "ブランドの入口から申込、重要事項の同意、本人確認までを一つの体験にした試作。スクロールに連動して SIM カードが 3D で回る。", tech: "HTML / CSS / JavaScript", fact: "申込〜eKYC までの全画面を実装", img: "tukihi.jpg", url: "https://rikimaru63.github.io/Tukihi_HP/" },
-  { id: "recruit", title: "軽貨物ドライバー採用サイト", what: "本番稼働中の採用サイト。動く見出しと写真帯、30 秒で終わる応募導線。", tech: "TypeScript / Coolify（自社 VPS）", fact: "recruit.logence.co.jp で稼働", img: "recruit.jpg", url: "https://recruit.logence.co.jp/", client: true },
-  { id: "ayp", title: "YouTube 運営を AI が手伝う SaaS", what: "企画・タイトル・サムネイル・台本・分析まで、次にやることを AI が示す。YouTube コンサルの裏方として開発に参加。", tech: "Next.js / Vercel", fact: "依頼主の製品", img: "ayp.jpg", url: "https://ayp-algo.vercel.app/", client: true },
-  { id: "directo", title: "YouTube 制作チームの募集サイト", what: "ディレクターから編集者・サムネ・シナリオまで、制作チームと講座生を直接つなぐ。", tech: "Next.js / Vercel", fact: "依頼主の製品", img: "directo.jpg", url: "https://directo-dun.vercel.app/", client: true },
+  { id: "client-c", title: "軽貨物ドライバー採用サイト", what: "本番稼働中の採用サイト。動く見出しと写真帯、30 秒で終わる応募導線。自社 VPS の Coolify で配信。", tech: "TypeScript / Coolify", fact: "本番稼働中（依頼主の名称は伏せる）", img: "client-c.jpg", client: true },
+  { id: "client-a", title: "YouTube 運営を AI が手伝う SaaS", what: "企画・タイトル・サムネイル・台本・分析まで、次にやることを AI が示す。YouTube コンサルの裏方として開発に参加。", tech: "Next.js / Vercel", fact: "依頼主の製品（名称と画面の一部を伏せる）", img: "client-a.jpg", client: true },
+  { id: "client-b", title: "YouTube 制作チームの募集サイト", what: "ディレクターから編集者・サムネ・シナリオまで、制作チームと講座生を直接つなぐ。", tech: "Next.js / Vercel", fact: "依頼主の製品（名称と画面の一部を伏せる）", img: "client-b.jpg", client: true },
   { id: "repairdesk", title: "Repair Desk", what: "修理系の動画や記事から商材を拾い、ヤフオクで仕入れて eBay で売るための調査アプリ。ブラウザ連携で定期巡回し、LAN の別端末からも使える。", tech: "Node.js / Orca ブラウザ連携 / SQLite", fact: "自分の道具。常駐で巡回中", img: "repairdesk.jpg" },
   { id: "enoshima", title: "江の島のドッグ＆猫カフェ", what: "店舗サイト。時間帯で営業中の表示が切り替わり、昼の部と夜の部で予約先が変わる。", tech: "HTML / CSS / JavaScript", fact: "公開中", img: "enoshima.jpg", url: "https://rikimaru63.github.io/tsukihi-enoshima/" },
   { id: "tatami", title: "京都の畳店", what: "昭和二十三年創業の畳店のサイト。縦書きと畳の写真だけで組んだ。", tech: "HTML / CSS", fact: "公開中", img: "tatami.jpg", url: "https://rikimaru63.github.io/tatami-hp/" },
