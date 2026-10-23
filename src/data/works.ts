@@ -12,6 +12,7 @@ export type Work = {
 };
 
 export const works: Work[] = [
+  { id: "samurai", title: "海外向けトレーディングカード EC", what: "日本のポケモンカードとワンピースカードを海外へ売る EC です。US と EU の本番を自社 VPS の Coolify で運用し、価格、画像、購入上限を管理画面から一括で更新できるようにしました。営業を止めずに 11 か月、改修を続けています。", tech: "Next.js / Prisma / PostgreSQL / Coolify", fact: "本番稼働中 · 商品 9,641 点 · 自動テスト 1,063 件", img: "samurai.jpg", url: "https://samuraicardhub.com/", client: true },
   { id: "tukihi", title: "個人向け SIM 申込サイト", what: "個人向け SIM のブランドサイトから申込、重要事項への同意、本人確認までを一つの流れにした試作です。スクロールすると SIM カードが 3D で回ります。依頼ではなく、提案のために自分で作りました。", tech: "HTML / CSS / JavaScript", fact: "申込から eKYC までの全画面を実装", img: "tukihi.jpg", url: "https://rikimaru63.github.io/Tukihi_HP/" },
   { id: "client-c", title: "軽貨物ドライバー採用サイト", what: "本番で動いている採用サイトです。見出しが動き、写真が帯で流れ、応募は 30 秒で終わるようにしました。自社の VPS に置いた Coolify で配信しています。", tech: "TypeScript / Coolify", fact: "本番稼働中。依頼主の名前は伏せています", img: "client-c.jpg", client: true },
   { id: "repairdesk", title: "Repair Desk", what: "修理系の動画や記事から商材を拾い、ヤフオクで仕入れて eBay で売るための調査アプリです。自分用に作りました。ブラウザと連携して定期的に巡回し、同じ Wi-Fi の別の端末からも開けます。", tech: "Node.js / Orca ブラウザ連携 / SQLite", fact: "自分の道具。常駐で巡回中", img: "repairdesk.jpg" },
@@ -28,7 +29,6 @@ export const more = [
   { title: "LINE 自動応対", what: "複数の LINE 公式アカウントの返信を自動化しました。AI がやるのは問い合わせの種類を判定して、依頼主が承認した定型文を選ぶところまでです。選べない時は何も返さず、Discord と管理画面で人に回します。本番に出す前に、判定だけして送らない影運用で確かめました。", tech: "TypeScript / Redis / OpenAI / Docker", fact: "自動テスト 3,104 件 · 本番運用中", href: "line-auto-reply" },
   { title: "YouTube 運営を手伝う AI の SaaS", what: "企画、タイトル、サムネイル、台本、分析まで、次に何をすればいいかを AI が示す SaaS です。YouTube コンサルの裏方チームの一員として、Next.js で開発に加わっています。製品名は伏せています。", tech: "Next.js / Vercel", fact: "依頼主の製品 · 稼働中", client: true },
   { title: "YouTube 制作チームの募集サイト", what: "ディレクター、編集者、サムネイル、シナリオまで、制作チームと講座生を直接つなぐサイトです。上と同じ裏方チームで作りました。", tech: "Next.js / Vercel", fact: "依頼主の製品 · 稼働中", client: true },
-  { title: "海外向けトレカ EC", what: "海外向けのトレーディングカード EC を、US と EU の本番として自社 VPS の Coolify で運用しています。価格、画像、購入上限を管理画面から一括で更新できるようにしました。営業を止めずに 11 か月改修を続けています。", tech: "Next.js / Prisma / PostgreSQL", fact: "コミット 657 · 自動テスト 1,063 件", href: "trading-card-ec" },
   { title: "入金・契約の管理画面", what: "運用代行の月額入金を会社ごとに見える化し、Chatwork に通知する管理画面です。依頼主のサーバーに置きました。", tech: "Next.js / Prisma / Coolify", fact: "自動テスト 826 件 · 本番 11 アカウント", href: "payment-tracker" },
   { title: "SNS 教材 2,848 本の知識基盤", what: "動画、PDF、会員サイトにあった SNS 教材 2,848 本を、1 本 1 ノートに変換しました。媒体とジャンルの札を付けて AI が引けるようにし、競合 278 アカウントの 2,856 投稿も集めて分類しています。", tech: "Python / NotebookLM / Obsidian", fact: "概念 9,000 以上 · 週次で自動更新", href: "sns-knowledge-base" },
   { title: "SNS の自動マーケター（ShadowAI）", what: "Threads と X の投稿、反応、調査、品質の検査を AI が回す仕組みです。OpenClaw のスキルを 10 本書きました。v1 と v2 で 2,335 コミットあり、私のリポジトリで一番大きい物です。", tech: "Python", fact: "コミット 2,335（v1＋v2）" },
