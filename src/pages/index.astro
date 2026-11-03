@@ -164,7 +164,8 @@ const since = repos.map((r) => r.y).sort()[0];
     </div>
   </section>
 
-  <!-- 連絡 -->
+  <!-- 連絡（site.email が空なら出さない） -->
+  {site.email && (
   <section class="contact" id="contact" aria-labelledby="contact-h">
     <div class="wrap">
       <h2 id="contact-h" class="head" data-lines>手でやっている仕事は、人が辞めた日に止まります</h2>
@@ -177,6 +178,7 @@ const since = repos.map((r) => r.y).sort()[0];
       <p class="small muted">{site.availability.hours}。{site.availability.reply}。</p>
     </div>
   </section>
+  )}
 </Base>
 
 <script is:inline define:vars={{ base }}>
