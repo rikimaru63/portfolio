@@ -5,7 +5,8 @@ export const site = {
   title: "Ando. | Web、EC、AI 自動化、ハードウェア、ゲームを作るフリーランス開発者",
   description:
     "GitHub の 67 リポジトリ、6,293 コミットを 3D の街として歩けるポートフォリオ。LINE 自動応対、EC、入金管理、SNS 自動化、Raspberry Pi、Godot のゲームまで。フリーランス開発者 Ando。",
-  email: "logence63@gmail.com",
+  // 連絡先は載せない（本人判断 2026-11-03）。空なら相談リンクと連絡ブロックを表示しない。
+  email: "",
   // 本人確認待ち: 公開してよい X アカウントなら handle を入れる。空なら表示しない。
   x: "",
   // 稼働条件の目安（本人確認待ち。公開前に数字を直す）

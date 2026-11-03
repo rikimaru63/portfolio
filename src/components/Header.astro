@@ -14,7 +14,7 @@ const nav = [
   <nav aria-label="ページ内">
     {nav.map(([label, href]) => <a class="link" href={href}>{label}</a>)}
   </nav>
-  <a class="act" href={mailto()}>相談する</a>
+  {site.email && <a class="act" href={mailto()}>相談する</a>}
 </header>
 
 <style>
