@@ -2,7 +2,6 @@
 export const site = {
   name: "Ando",
   brand: "Ando.",
-  company: "Logence",
   title: "Ando. | Web、EC、AI 自動化、ハードウェア、ゲームを作るフリーランス開発者",
   description:
     "GitHub の 67 リポジトリ、6,293 コミットを 3D の街として歩けるポートフォリオ。LINE 自動応対、EC、入金管理、SNS 自動化、Raspberry Pi、Godot のゲームまで。フリーランス開発者 Ando。",
